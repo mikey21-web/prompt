@@ -30,9 +30,9 @@ export function QuotaCard() {
   // Calculate reset time (midnight UTC)
   const now = new Date();
   const midnight = new Date();
-  midnight.setUTCHours(24, 0, 0, 0);
+  midnight.setUTCHours(0, 0, 0, 0);
   const resetDate = new Date(user.dailyReset);
-  resetDate.setUTCHours(24, 0, 0, 0);
+  resetDate.setUTCHours(0, 0, 0, 0);
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">

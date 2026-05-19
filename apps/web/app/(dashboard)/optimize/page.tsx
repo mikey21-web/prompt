@@ -43,9 +43,7 @@ export default function OptimizePage() {
             <OptimizeResult
               original={originalPrompt}
               optimized={result.optimized}
-              tokensIn={result.tokensIn}
-              tokensOut={result.tokensOut}
-              savedTokens={result.savedTokens}
+              tokens={result.tokens}
             />
           )}
 

@@ -1,15 +1,10 @@
 import type { Mode, TargetModel, Tone } from "./types";
 
 const MODEL_HINTS: Record<TargetModel, string> = {
-  gpt4o:
-    "Format for GPT-4o: use markdown headers and bullet points for structure.",
-  claude:
-    "Format for Claude: wrap sections in XML tags like <context>, <task>, <format>.",
-  gemini:
-    "Format for Gemini: use numbered steps and explicit output format specification.",
-  midjourney:
-    "Format for Midjourney: output comma-separated visual descriptors, style keywords, and camera/lighting terms. Keep under 60 words.",
-  auto: "Format for general LLM use.",
+  "gpt-4o-mini":
+    "Format for GPT-4o Mini: use clear, concise markdown formatting with bullet points.",
+  "gpt-4o":
+    "Format for GPT-4o: use detailed markdown headers and structured sections.",
 };
 
 export function buildSystemPrompt(

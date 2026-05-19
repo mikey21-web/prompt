@@ -7,17 +7,15 @@ import { useState } from 'react';
 interface OptimizeResultProps {
   original: string;
   optimized: string;
-  tokensIn: number;
-  tokensOut: number;
-  savedTokens: number;
+  tokens: { input: number; output: number };
+  originalTokens?: number;
 }
 
 export function OptimizeResult({
   original,
   optimized,
-  tokensIn,
-  tokensOut,
-  savedTokens,
+  tokens,
+  originalTokens,
 }: OptimizeResultProps) {
   const [copied, setCopied] = useState(false);
 
@@ -31,8 +29,9 @@ export function OptimizeResult({
     }
   };
 
+  const savedTokens = originalTokens ? originalTokens - tokens.output : 0;
   const savingPercent =
-    tokensIn > 0 ? ((savedTokens / tokensIn) * 100).toFixed(1) : '0';
+    tokens.input > 0 ? ((savedTokens / tokens.input) * 100).toFixed(1) : '0';
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
@@ -41,19 +40,19 @@ export function OptimizeResult({
       <PromptDiff
         original={original}
         optimized={optimized}
-        tokensIn={tokensIn}
-        tokensOut={tokensOut}
-        savedTokens={savedTokens}
+        tokensIn={tokens.input}
+        tokensOut={tokens.output}
+        savedTokens={originalTokens ? tokens.input - tokens.output : 0}
       />
 
       <div className="mt-6 grid grid-cols-2 gap-4">
         <div className="rounded-lg bg-gray-50 p-4">
           <p className="text-sm text-gray-600">Input Tokens</p>
-          <p className="text-2xl font-bold text-gray-900">{tokensIn}</p>
+          <p className="text-2xl font-bold text-gray-900">{tokens.input}</p>
         </div>
         <div className="rounded-lg bg-gray-50 p-4">
           <p className="text-sm text-gray-600">Output Tokens</p>
-          <p className="text-2xl font-bold text-gray-900">{tokensOut}</p>
+          <p className="text-2xl font-bold text-gray-900">{tokens.output}</p>
         </div>
       </div>
 

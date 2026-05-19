@@ -12,7 +12,7 @@ interface OptimizeFormProps {
 export function OptimizeForm({ onSubmit, loading }: OptimizeFormProps) {
   const [prompt, setPrompt] = useState('');
   const [mode, setMode] = useState<Mode>('compress');
-  const [targetModel, setTargetModel] = useState<TargetModel>('auto');
+  const [targetModel, setTargetModel] = useState<TargetModel>('gpt-4o-mini');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,11 +64,8 @@ export function OptimizeForm({ onSubmit, loading }: OptimizeFormProps) {
           className="mt-1 block w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           disabled={loading}
         >
-          <option value="auto">Auto (general LLM)</option>
-          <option value="gpt4o">GPT-4o</option>
-          <option value="claude">Claude</option>
-          <option value="gemini">Gemini</option>
-          <option value="midjourney">Midjourney</option>
+          <option value="gpt-4o-mini">GPT-4o Mini (Fast & Cheap)</option>
+          <option value="gpt-4o">GPT-4o (More Capable)</option>
         </select>
       </div>
 
