@@ -181,7 +181,7 @@ export default function BillingPage() {
             isCurrentPlan={currentPlan === plan.name.toLowerCase()}
             onAction={() => handleUpgrade(plan.name)}
             disabled={currentPlan === plan.name.toLowerCase()}
-            loading={loading && currentPlan !== plan.name.toLowerCase()}
+            loading={loading && plan.name.toLowerCase() === currentPlan}
           />
         ))}
       </div>

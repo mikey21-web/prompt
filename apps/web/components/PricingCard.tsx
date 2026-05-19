@@ -76,9 +76,7 @@ export function PricingCard({
           ? 'Processing...'
           : isCurrentPlan
             ? 'Current Plan'
-            : name === 'Free'
-              ? 'Current Plan'
-              : 'Upgrade'}
+            : 'Upgrade'}
       </button>
     </div>
   );
