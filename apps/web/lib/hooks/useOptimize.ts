@@ -1,10 +1,10 @@
-import { useMutation } from 'convex/react';
-import { api } from '@/convex/_generated/api';
+import { useAction } from 'convex/react';
+import { api } from '@promptforge/convex/convex/_generated/api';
 import { useState } from 'react';
 import type { Mode, TargetModel } from '@promptforge/core';
 
 export function useOptimize() {
-  const optimize = useMutation(api.optimize.optimizePrompt);
+  const optimize = useAction(api.optimize.optimizePrompt);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{
     optimized: string;

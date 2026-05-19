@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { useMutation } from 'convex/react';
+import { useAction } from 'convex/react';
 import { useOptimize } from '@/lib/hooks/useOptimize';
 
 describe('useOptimize', () => {
@@ -9,7 +9,7 @@ describe('useOptimize', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     optimizeMock = vi.fn();
-    vi.mocked(useMutation).mockReturnValue(optimizeMock);
+    vi.mocked(useAction).mockReturnValue(optimizeMock);
   });
 
   it('has the correct initial state', () => {

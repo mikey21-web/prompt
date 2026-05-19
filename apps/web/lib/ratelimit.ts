@@ -1,17 +1,17 @@
 /**
- * In-memory sliding-window rate limiter with graceful degradation.
+ * Sliding-window rate limiter with two backends:
  *
- * Production deployments should run behind Upstash/Vercel KV (see README).
- * For now we use an in-memory map so the app stays functional in dev and on
- * single-instance deploys without forcing an external dep at install time.
+ *   - Upstash Redis when UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN
+ *     are set (preferred for any multi-instance deploy)
+ *   - In-memory fallback otherwise (per-instance state — fine for dev and
+ *     single-container deploys)
  *
- * Limitation: in-memory state is per-instance. Multiple Vercel functions or
- * containers will not share a counter, so the *effective* limit is
- * `limit * instances`. Swap the implementation for `@upstash/ratelimit` when
- * you have Redis credentials — see `createUpstashLimiter` below for the
- * drop-in shape this module exposes.
+ * The two backends share the same `limit(identifier)` interface so callers
+ * never have to branch.
  */
 
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 import { logger } from '@/lib/logger';
 
 export interface RateLimitResult {
@@ -20,6 +20,12 @@ export interface RateLimitResult {
   remaining: number;
   reset: number;
 }
+
+interface Limiter {
+  limit(identifier: string): Promise<RateLimitResult>;
+}
+
+// ---------- in-memory backend ----------
 
 interface Bucket {
   count: number;
@@ -30,7 +36,6 @@ const buckets = new Map<string, Bucket>();
 let lastSweep = 0;
 
 function sweep(now: number, windowMs: number) {
-  // Remove expired buckets every 60 seconds
   if (now - lastSweep < 60_000) return;
   lastSweep = now;
   for (const [k, b] of buckets.entries()) {
@@ -47,12 +52,9 @@ export interface CreateLimiterOptions {
   prefix?: string;
 }
 
-export function createLimiter(opts: CreateLimiterOptions) {
+function createInMemoryLimiter(opts: CreateLimiterOptions): Limiter {
   const { limit, windowMs, prefix = 'rl' } = opts;
   return {
-    /**
-     * Check if `identifier` is allowed under this limiter. Mutates internal state.
-     */
     async limit(identifier: string): Promise<RateLimitResult> {
       const key = `${prefix}:${identifier}`;
       const now = Date.now();
@@ -83,6 +85,50 @@ export function createLimiter(opts: CreateLimiterOptions) {
       return { success, limit, remaining, reset };
     },
   };
+}
+
+// ---------- Upstash backend ----------
+
+function createUpstashLimiter(opts: CreateLimiterOptions): Limiter {
+  const { limit, windowMs, prefix = 'rl' } = opts;
+  const seconds = `${Math.ceil(windowMs / 1000)} s` as `${number} s`;
+  const rl = new Ratelimit({
+    redis: Redis.fromEnv(),
+    limiter: Ratelimit.slidingWindow(limit, seconds),
+    analytics: false,
+    prefix,
+  });
+  return {
+    async limit(identifier: string) {
+      const r = await rl.limit(identifier);
+      if (!r.success) {
+        logger.warn('ratelimit.exceeded', {
+          identifier,
+          prefix,
+          limit,
+          window_ms: windowMs,
+        });
+      }
+      return {
+        success: r.success,
+        limit: r.limit,
+        remaining: r.remaining,
+        reset: r.reset,
+      };
+    },
+  };
+}
+
+// ---------- factory ----------
+
+export function createLimiter(opts: CreateLimiterOptions): Limiter {
+  const upstashConfigured = Boolean(
+    process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+  );
+  if (upstashConfigured) {
+    return createUpstashLimiter(opts);
+  }
+  return createInMemoryLimiter(opts);
 }
 
 /** Standard limiter for the /api/checkout endpoint: 5 requests per minute. */

@@ -1,35 +1,16 @@
 'use client';
 
-import dynamic from 'next/dynamic';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 /**
- * Vercel Analytics loader.
+ * Vercel Analytics + Speed Insights loader.
  *
- * The package may not be installed in every environment, so we dynamic-import
- * with an empty fallback. To activate analytics:
- *   npm install @vercel/analytics @vercel/speed-insights
- *
- * If the packages are missing, this renders nothing and the app keeps working.
+ * Beacons only fire when deployed on Vercel. Locally and in test the
+ * components mount but their network calls are skipped by the SDKs, so
+ * there's no dev/prod divergence to worry about.
  */
-const Analytics = dynamic(
-  () =>
-    import('@vercel/analytics/react')
-      .then((m) => m.Analytics)
-      .catch(() => () => null),
-  { ssr: false }
-);
-
-const SpeedInsights = dynamic(
-  () =>
-    import('@vercel/speed-insights/next')
-      .then((m) => m.SpeedInsights)
-      .catch(() => () => null),
-  { ssr: false }
-);
-
 export function AnalyticsLoader() {
-  // Only emit beacons in production to avoid noise during dev/test.
-  if (process.env.NODE_ENV !== 'production') return null;
   return (
     <>
       <Analytics />

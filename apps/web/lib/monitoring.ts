@@ -1,17 +1,18 @@
 /**
- * Monitoring façade: wraps Sentry so the app keeps running even when
- * @sentry/nextjs isn't installed or DSN isn't configured. To activate:
+ * Monitoring façade. Forwards to Sentry when @sentry/nextjs is installed AND
+ * a DSN is configured; otherwise structured-logs locally so errors stay
+ * visible in dev and Vercel function logs.
  *
- *   npm install @sentry/nextjs
- *   set NEXT_PUBLIC_SENTRY_DSN, SENTRY_DSN
- *   replace the dynamic import below with a static one and uncomment
- *   the init blocks in instrumentation.ts (see file)
- *
- * Until then, captureException is a console.error so errors are visible
- * in dev and Vercel logs.
+ * Why a façade: it keeps test code, API routes, and ErrorBoundary blissfully
+ * unaware of whether Sentry exists. Missing DSN = silently degrade.
  */
 
+import * as Sentry from '@sentry/nextjs';
 import { logger } from '@/lib/logger';
+
+const SENTRY_ENABLED = Boolean(
+  process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.SENTRY_DSN
+);
 
 export interface CaptureContext {
   componentStack?: string;
@@ -36,9 +37,17 @@ export function captureException(
       : {}),
   });
 
-  // Sentry hook — opt-in. When @sentry/nextjs is installed, you can replace
-  // this stub with:
-  //   Sentry.captureException(error, { contexts: { react: context } });
+  if (SENTRY_ENABLED) {
+    Sentry.captureException(error, {
+      tags: context?.tags,
+      extra: {
+        ...context?.extras,
+        ...(context?.componentStack
+          ? { componentStack: context.componentStack }
+          : {}),
+      },
+    });
+  }
 }
 
 export function captureMessage(
@@ -46,4 +55,10 @@ export function captureMessage(
   level: 'info' | 'warn' | 'error' = 'info'
 ): void {
   logger[level](message);
+  if (SENTRY_ENABLED) {
+    Sentry.captureMessage(
+      message,
+      level === 'error' ? 'error' : level === 'warn' ? 'warning' : 'info'
+    );
+  }
 }

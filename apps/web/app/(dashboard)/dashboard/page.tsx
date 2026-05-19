@@ -23,7 +23,7 @@ export default function DashboardPage() {
 
   const [prompt, setPrompt] = useState("");
   const [mode, setMode] = useState<Mode>("compress");
-  const [targetModel, setTargetModel] = useState<TargetModel>("auto");
+  const [targetModel, setTargetModel] = useState<TargetModel>("gpt-4o-mini");
   const [result, setResult] = useState<{
     optimized: string;
     tokensIn: number;

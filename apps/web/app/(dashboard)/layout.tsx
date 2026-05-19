@@ -2,6 +2,10 @@ import { Navbar } from '@/components/Navbar';
 import { Sidebar } from '@/components/Sidebar';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
+// Dashboard pages depend on auth + live Convex data, so they can't be
+// statically rendered at build time.
+export const dynamic = 'force-dynamic';
+
 export default function DashboardLayout({
   children,
 }: {

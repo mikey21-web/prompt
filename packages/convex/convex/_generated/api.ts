@@ -48,10 +48,29 @@ export const api = {
     compress: {} as AnyAction,
     enhance: {} as AnyAction,
     optimizePrompt: {} as AnyAction,
+    optimizeViaApi: {} as AnyAction,
   },
 };
 
 export const components = {};
+
+// `internal` mirrors `api` for internal-only functions. The real codegen
+// distinguishes by visibility; the stub uses the same shape so imports
+// resolve identically.
+export const internal = {
+  users: {
+    checkAndIncrementUsage: {} as FunctionReference<"mutation", "internal", any, any>,
+    getUserByApiKey: {} as FunctionReference<"mutation", "internal", any, any>,
+  },
+  optimize: {
+    compress: {} as FunctionReference<"action", "internal", any, any>,
+    enhance: {} as FunctionReference<"action", "internal", any, any>,
+    savePromptAndLog: {} as FunctionReference<"mutation", "internal", any, any>,
+  },
+  usageLogs: {
+    log: {} as FunctionReference<"mutation", "internal", any, any>,
+  },
+};
 
 // Mock hooks for development
 export const useQuery = (fn: any, args?: any) => null;
