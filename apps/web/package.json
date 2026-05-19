@@ -15,6 +15,7 @@
     "@promptforge/core": "*",
     "@promptforge/ui": "*",
     "convex": "^1.14.0",
+    "lucide-react": "^1.16.0",
     "next": "14.2.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
