@@ -1,0 +1,30 @@
+{
+  "manifest": {
+    "version": "1.0.0",
+    "minimum_chrome_version": "120",
+    "permissions": ["activeTab", "storage", "contextMenus", "scripting"],
+    "host_permissions": ["<all_urls>"],
+    "action": {
+      "default_popup": "popup.html",
+      "default_title": "PromptForge"
+    }
+  },
+  "entrypoints": [
+    {
+      "name": "popup",
+      "type": "popup"
+    },
+    {
+      "name": "options",
+      "type": "options"
+    },
+    {
+      "name": "background",
+      "type": "background"
+    },
+    {
+      "name": "contents/index",
+      "type": "content-script"
+    }
+  ]
+}
