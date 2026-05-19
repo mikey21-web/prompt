@@ -76,8 +76,17 @@ export default function DashboardPage() {
         </p>
       </div>
 
+      {/* New Optimization Button */}
+      <Link
+        href="/optimize"
+        className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white hover:bg-indigo-700"
+      >
+        <Zap className="h-5 w-5" />
+        New Optimization
+      </Link>
+
       {/* Main content grid */}
-      <div className="grid gap-8 lg:grid-cols-3">
+      <div className="grid gap-8 grid-cols-1 lg:grid-cols-3">
         {/* Left column - quota and stats */}
         <div className="lg:col-span-1 space-y-8">
           <QuotaCard />
