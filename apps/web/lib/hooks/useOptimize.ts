@@ -4,12 +4,13 @@ import { useState } from 'react';
 import type { Mode, TargetModel } from '@promptforge/core';
 
 export function useOptimize() {
-  const optimize = useMutation(api.prompts.optimize);
+  const optimize = useMutation(api.optimize.optimizePrompt);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{
     optimized: string;
-    tokens: { input: number; output: number };
-    originalTokens?: number;
+    tokensIn: number;
+    tokensOut: number;
+    savedTokens: number;
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,10 +22,13 @@ export function useOptimize() {
     setLoading(true);
     setError(null);
     try {
+      // Normalize model format: convert "gpt-4o-mini" to "gpt4o" for Convex validation
+      const normalizedModel = targetModel?.replace(/-/g, '') || 'gpt4o';
+
       const res = await optimize({
         prompt,
         mode,
-        targetModel,
+        targetModel: normalizedModel as TargetModel,
       });
       setResult(res);
       return res;

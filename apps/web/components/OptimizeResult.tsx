@@ -2,7 +2,7 @@
 
 import { PromptDiff, TokenSavings } from '@promptforge/ui';
 import { Copy, Check } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface OptimizeResultProps {
   original: string;
@@ -19,11 +19,17 @@ export function OptimizeResult({
 }: OptimizeResultProps) {
   const [copied, setCopied] = useState(false);
 
+  // Fix memory leak: cleanup timer on unmount
+  useEffect(() => {
+    if (!copied) return;
+    const timer = setTimeout(() => setCopied(false), 2000);
+    return () => clearTimeout(timer);
+  }, [copied]);
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(optimized);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy:', err);
     }
@@ -64,6 +70,7 @@ export function OptimizeResult({
 
       <button
         onClick={handleCopy}
+        aria-label={copied ? 'Copied to clipboard' : 'Copy optimized prompt to clipboard'}
         className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 transition-colors"
       >
         {copied ? (

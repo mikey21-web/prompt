@@ -9,6 +9,8 @@ interface OptimizeFormProps {
   loading: boolean;
 }
 
+const validModels = ['gpt-4o-mini', 'gpt-4o'] as const;
+
 export function OptimizeForm({ onSubmit, loading }: OptimizeFormProps) {
   const [prompt, setPrompt] = useState('');
   const [mode, setMode] = useState<Mode>('compress');
@@ -20,13 +22,20 @@ export function OptimizeForm({ onSubmit, loading }: OptimizeFormProps) {
     await onSubmit(prompt, mode, targetModel);
   };
 
+  const handleModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedModel = e.target.value as typeof validModels[number];
+    if (!validModels.includes(selectedModel)) return;
+    setTargetModel(selectedModel as TargetModel);
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700">
+        <label htmlFor="prompt-input" className="block text-sm font-medium text-gray-700">
           Your Prompt
         </label>
         <textarea
+          id="prompt-input"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           placeholder="Enter the prompt you want to optimize..."
@@ -55,12 +64,13 @@ export function OptimizeForm({ onSubmit, loading }: OptimizeFormProps) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">
+        <label htmlFor="model-select" className="block text-sm font-medium text-gray-700">
           Target Model
         </label>
         <select
+          id="model-select"
           value={targetModel}
-          onChange={(e) => setTargetModel(e.target.value as TargetModel)}
+          onChange={handleModelChange}
           className="mt-1 block w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           disabled={loading}
         >
@@ -72,6 +82,7 @@ export function OptimizeForm({ onSubmit, loading }: OptimizeFormProps) {
       <button
         type="submit"
         disabled={loading || !prompt.trim()}
+        aria-label="Optimize prompt with selected mode"
         className="w-full rounded bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 disabled:bg-gray-300"
       >
         {loading ? 'Optimizing...' : 'Optimize'}

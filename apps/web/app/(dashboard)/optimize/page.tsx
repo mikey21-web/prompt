@@ -16,7 +16,12 @@ export default function OptimizePage() {
     targetModel: TargetModel
   ) => {
     setOriginalPrompt(prompt);
-    await run(prompt, mode, targetModel);
+    try {
+      await run(prompt, mode, targetModel);
+    } catch (e) {
+      // error already set in state by useOptimize
+      console.error('Optimization failed:', e);
+    }
   };
 
   return (
@@ -43,7 +48,8 @@ export default function OptimizePage() {
             <OptimizeResult
               original={originalPrompt}
               optimized={result.optimized}
-              tokens={result.tokens}
+              tokens={{ input: result.tokensIn, output: result.tokensOut }}
+              originalTokens={result.tokensIn}
             />
           )}
 
