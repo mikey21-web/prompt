@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
 
     try {
       console.log(`Processing checkout for user ${userId}, plan: ${plan}`);
-      await (convex.mutation as any)(api.users.updatePlan, {
+      await convex.mutation(api.users.updatePlan, {
         clerkId: userId,
         plan,
         stripeCustomerId: customerId,
