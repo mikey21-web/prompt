@@ -16,11 +16,23 @@ const MODE_LABELS: Record<string, string> = {
 
 export default function HistoryPage() {
   const [filterMode, setFilterMode] = useState<string>("");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const history = useQuery(api.prompts.getHistory, {
     limit: 50,
     mode: filterMode || undefined,
   });
-  const deletePrompt = useMutation(api.prompts.deletePrompt);
+  const { mutate: deletePrompt, isPending } = useMutation(api.prompts.deletePrompt);
+
+  const handleDelete = async (promptId: string) => {
+    try {
+      setDeletingId(promptId);
+      await deletePrompt({ promptId });
+    } catch (error) {
+      console.error("Delete failed:", error);
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   return (
     <div className="max-w-4xl space-y-6">
@@ -58,10 +70,11 @@ export default function HistoryPage() {
                 )}
               </div>
               <button
-                onClick={() => deletePrompt({ promptId: item._id })}
-                className="text-xs text-red-400 hover:text-red-600"
+                onClick={() => handleDelete(item._id)}
+                disabled={isPending || deletingId === item._id}
+                className="text-xs text-red-400 hover:text-red-600 disabled:text-gray-300"
               >
-                Delete
+                {deletingId === item._id ? "Deleting..." : "Delete"}
               </button>
             </div>
             <div className="grid grid-cols-2 gap-3 text-sm">

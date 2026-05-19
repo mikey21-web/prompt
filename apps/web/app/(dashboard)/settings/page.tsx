@@ -8,15 +8,19 @@ import Link from "next/link";
 
 export default function SettingsPage() {
   const user = useQuery(api.users.getMe);
-  const generateKey = useMutation(api.users.generateApiKey);
+  const { mutate: generateKey, isPending } = useMutation(api.users.generateApiKey);
   const [apiKey, setApiKey] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleGenerateKey() {
     try {
+      setError(null);
       const key = await generateKey();
       setApiKey(key);
     } catch (e) {
-      alert(e instanceof Error ? e.message : "Failed to generate key");
+      const errorMsg = e instanceof Error ? e.message : "Failed to generate key";
+      console.error("Generate key failed:", e);
+      setError(errorMsg);
     }
   }
 
@@ -53,6 +57,11 @@ export default function SettingsPage() {
       {user.plan !== "free" && (
         <div className="bg-white border rounded-xl p-6">
           <h2 className="font-semibold text-gray-700 mb-4">Developer API</h2>
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+              {error}
+            </div>
+          )}
           {apiKey ? (
             <div>
               <p className="text-sm text-green-600 mb-2">
@@ -69,17 +78,19 @@ export default function SettingsPage() {
               </p>
               <button
                 onClick={handleGenerateKey}
-                className="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-900"
+                disabled={isPending}
+                className="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-900 disabled:bg-gray-400"
               >
-                Regenerate API Key
+                {isPending ? "Regenerating..." : "Regenerate API Key"}
               </button>
             </div>
           ) : (
             <button
               onClick={handleGenerateKey}
-              className="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-900"
+              disabled={isPending}
+              className="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-900 disabled:bg-gray-400"
             >
-              Generate API Key
+              {isPending ? "Generating..." : "Generate API Key"}
             </button>
           )}
           <div className="mt-4 p-3 bg-gray-50 rounded-lg text-xs text-gray-600 font-mono whitespace-pre">
