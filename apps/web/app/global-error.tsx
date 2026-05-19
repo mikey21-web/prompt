@@ -1,13 +1,11 @@
 'use client';
 
 import { useEffect } from 'react';
+import { captureException } from '@/lib/monitoring';
 
 /**
  * Next.js global error boundary. Renders the html shell because the root
  * layout has already failed by the time this is reached.
- *
- * If Sentry is wired up, replace the `console.error` line with
- * `Sentry.captureException(error)`.
  */
 export default function GlobalError({
   error,
@@ -17,8 +15,9 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.error('[global-error]', error);
+    captureException(error, {
+      tags: { boundary: 'global', digest: error.digest ?? 'none' },
+    });
   }, [error]);
 
   return (

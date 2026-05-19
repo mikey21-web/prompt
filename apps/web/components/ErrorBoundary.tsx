@@ -1,6 +1,7 @@
 'use client';
 
 import { Component, ErrorInfo, ReactNode } from 'react';
+import { captureException } from '@/lib/monitoring';
 
 interface Props {
   children: ReactNode;
@@ -15,8 +16,9 @@ interface State {
 
 /**
  * Catches render-time errors in dashboard pages so the whole shell doesn't
- * crash. Pair with Sentry by passing an `onError` prop that calls
- * `Sentry.captureException`.
+ * crash. Captured errors are forwarded to the monitoring façade
+ * (`@/lib/monitoring`) which logs locally and is ready to forward to Sentry
+ * once @sentry/nextjs is installed.
  */
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
@@ -29,9 +31,10 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    // Always log to console for local debugging
-    // eslint-disable-next-line no-console
-    console.error('[ErrorBoundary]', error, info.componentStack);
+    captureException(error, {
+      componentStack: info.componentStack ?? undefined,
+      tags: { boundary: 'dashboard' },
+    });
     this.props.onError?.(error, info);
   }
 
