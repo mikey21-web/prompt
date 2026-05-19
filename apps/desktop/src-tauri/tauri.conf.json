@@ -35,5 +35,13 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
+  },
+  "updater": {
+    "active": true,
+    "endpoints": [
+      "https://releases.promptforge.app/latest.json"
+    ],
+    "dialog": true,
+    "pubkey": "dW3/IeTG2X7KscVlFkWhJTdoncbOO7zDMwc3W6m65o="
   }
 }
