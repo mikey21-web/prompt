@@ -1,0 +1,39 @@
+{
+  "name": "@promptforge/extension",
+  "displayName": "PromptForge — AI Prompt Optimizer",
+  "version": "1.0.0",
+  "description": "Compress, enhance, and optimize AI prompts with one keystroke. Works in ChatGPT, Claude, Gemini, and any text input.",
+  "private": true,
+  "scripts": {
+    "dev": "plasmo dev",
+    "build": "plasmo build",
+    "build:firefox": "plasmo build --target=firefox-mv2",
+    "build:edge": "plasmo build --target=edge-mv3",
+    "build:all": "npm run build && npm run build:firefox && npm run build:edge",
+    "package": "plasmo package",
+    "package:firefox": "plasmo package --target=firefox-mv2"
+  },
+  "dependencies": {
+    "@promptforge/convex": "*",
+    "@promptforge/core": "*",
+    "@promptforge/ui": "*",
+    "convex": "^1.14.0",
+    "plasmo": "^0.88.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.270",
+    "@types/node": "^20.12.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.4",
+    "typescript": "^5.4.0"
+  },
+  "manifest": {
+    "permissions": ["activeTab", "storage", "contextMenus", "scripting"],
+    "host_permissions": ["<all_urls>"]
+  }
+}
