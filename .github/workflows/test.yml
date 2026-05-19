@@ -2,34 +2,39 @@ name: Test & Lint
 
 on:
   push:
-    branches: [main, develop]
+    branches: [master, main, develop]
   pull_request:
-    branches: [main, develop]
+    branches: [master, main, develop]
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Type check
-        run: npm run type-check
-
-      - name: Lint
+      - name: Lint web app
+        working-directory: apps/web
         run: npm run lint
 
-      - name: Test
-        run: npm run test
-        continue-on-error: true
+      - name: Run unit + integration tests
+        working-directory: apps/web
+        run: npm run test:run
 
-      - name: Build
+      - name: Build web app
+        working-directory: apps/web
+        env:
+          # Build needs valid-shaped env vars; values can be placeholders
+          NEXT_PUBLIC_CONVEX_URL: https://placeholder.convex.cloud
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_Y2xlcmsucGxhY2Vob2xkZXIubGNsLmRldiQ
+          CLERK_SECRET_KEY: sk_test_placeholder
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
         run: npm run build

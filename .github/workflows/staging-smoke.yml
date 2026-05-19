@@ -1,0 +1,56 @@
+name: Staging Smoke Test
+
+on:
+  # Trigger after Vercel deploys staging. The simplest setup is to call this
+  # workflow from a Vercel deployment hook via repository_dispatch.
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: 'Staging URL to smoke against'
+        required: true
+        default: 'https://staging.promptforge.dev'
+  repository_dispatch:
+    types: [vercel.deployment.success]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: apps/web
+        run: npx playwright install --with-deps chromium
+
+      - name: Smoke (homepage)
+        working-directory: apps/web
+        env:
+          PLAYWRIGHT_BASE_URL: ${{ github.event.inputs.base_url || github.event.client_payload.url }}
+        run: npx playwright test e2e/homepage.spec.ts --project=chromium
+
+      - name: Smoke (auth redirect)
+        working-directory: apps/web
+        env:
+          PLAYWRIGHT_BASE_URL: ${{ github.event.inputs.base_url || github.event.client_payload.url }}
+        run: npx playwright test e2e/auth-flow.spec.ts --project=chromium
+
+      - name: Notify slack on failure
+        if: failure()
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          payload: |
+            {
+              "text": "🚨 Staging smoke failed for ${{ github.event.inputs.base_url || github.event.client_payload.url }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
