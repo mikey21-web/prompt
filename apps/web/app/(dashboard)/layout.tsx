@@ -1,5 +1,6 @@
 import { Navbar } from '@/components/Navbar';
 import { Sidebar } from '@/components/Sidebar';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 export default function DashboardLayout({
   children,
@@ -13,7 +14,7 @@ export default function DashboardLayout({
         <Sidebar />
         <main className="flex-1 overflow-auto">
           <div className="mx-auto max-w-6xl px-6 py-8">
-            {children}
+            <ErrorBoundary>{children}</ErrorBoundary>
           </div>
         </main>
       </div>
