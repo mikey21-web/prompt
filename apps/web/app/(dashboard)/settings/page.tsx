@@ -1,134 +1,34 @@
 "use client";
 
-import { useQuery, useMutation } from "convex/react";
-import { api } from "@promptforge/convex/convex/_generated/api";
-import { PlanBadge } from "@promptforge/ui";
+import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
-import Link from "next/link";
 
 export default function SettingsPage() {
-  const user = useQuery(api.users.getMe);
-  const { mutate: generateKey, isPending } = useMutation(api.users.generateApiKey);
-  const [apiKey, setApiKey] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  async function handleGenerateKey() {
-    try {
-      setError(null);
-      const key = await generateKey();
-      setApiKey(key);
-    } catch (e) {
-      const errorMsg = e instanceof Error ? e.message : "Failed to generate key";
-      console.error("Generate key failed:", e);
-      setError(errorMsg);
-    }
-  }
-
-  if (!user) return <div className="animate-pulse">Loading...</div>;
+  const { user } = useUser();
+  const [emailNotifications, setEmailNotifications] = useState(true);
 
   return (
-    <div className="max-w-2xl space-y-8">
+    <div className="max-w-2xl space-y-6">
       <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
 
-      <div className="bg-white border rounded-xl p-6">
-        <h2 className="font-semibold text-gray-700 mb-4">Plan</h2>
-        <div className="flex items-center justify-between">
-          <div>
-            <PlanBadge plan={user.plan} />
-            <p className="text-sm text-gray-500 mt-1">
-              {user.plan === "free"
-                ? "25 optimizations/day"
-                : user.plan === "pro"
-                  ? "500 optimizations/day"
-                  : "500 optimizations/seat/day"}
-            </p>
-          </div>
-          {user.plan === "free" && (
-            <Link
-              href="/pricing"
-              className="bg-violet-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-violet-700"
-            >
-              Upgrade to Pro →
-            </Link>
-          )}
-        </div>
+      <div className="rounded-lg border bg-white p-6 shadow-sm">
+        <h3 className="font-semibold text-gray-900">Account</h3>
+        <p className="mt-4 text-sm text-gray-600">
+          {user?.primaryEmailAddress?.emailAddress}
+        </p>
       </div>
 
-      {user.plan !== "free" && (
-        <div className="bg-white border rounded-xl p-6">
-          <h2 className="font-semibold text-gray-700 mb-4">Developer API</h2>
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
-              {error}
-            </div>
-          )}
-          {apiKey ? (
-            <div>
-              <p className="text-sm text-green-600 mb-2">
-                API key generated — save it now, it won&apos;t be shown again:
-              </p>
-              <code className="block bg-gray-50 border rounded-lg px-3 py-2 text-sm font-mono text-gray-800 break-all">
-                {apiKey}
-              </code>
-            </div>
-          ) : user.apiKey ? (
-            <div>
-              <p className="text-sm text-gray-500 mb-2">
-                API key already generated. Regenerate to get a new one (invalidates old key).
-              </p>
-              <button
-                onClick={handleGenerateKey}
-                disabled={isPending}
-                className="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-900 disabled:bg-gray-400"
-              >
-                {isPending ? "Regenerating..." : "Regenerate API Key"}
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={handleGenerateKey}
-              disabled={isPending}
-              className="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-900 disabled:bg-gray-400"
-            >
-              {isPending ? "Generating..." : "Generate API Key"}
-            </button>
-          )}
-          <div className="mt-4 p-3 bg-gray-50 rounded-lg text-xs text-gray-600 font-mono whitespace-pre">
-{`POST https://your-deployment.convex.site/v1/optimize
-Authorization: Bearer pf_your_key
-{
-  "prompt": "your prompt here",
-  "mode": "compress",
-  "targetModel": "auto"
-}`}
-          </div>
-        </div>
-      )}
-
-      <div className="bg-white border rounded-xl p-6">
-        <h2 className="font-semibold text-gray-700 mb-4">Downloads</h2>
-        <div className="grid grid-cols-2 gap-3">
-          <a
-            href="#"
-            className="border rounded-lg p-4 hover:border-violet-300 transition-colors"
-          >
-            <div className="text-2xl mb-2">🌐</div>
-            <h3 className="font-semibold text-sm">Browser Extension</h3>
-            <p className="text-xs text-gray-500 mt-1">
-              Chrome / Firefox / Edge
-            </p>
-          </a>
-          <a
-            href="#"
-            className="border rounded-lg p-4 hover:border-violet-300 transition-colors"
-          >
-            <div className="text-2xl mb-2">🖥️</div>
-            <h3 className="font-semibold text-sm">Desktop App</h3>
-            <p className="text-xs text-gray-500 mt-1">
-              Windows / macOS / Linux
-            </p>
-          </a>
-        </div>
+      <div className="rounded-lg border bg-white p-6 shadow-sm">
+        <h3 className="font-semibold text-gray-900 mb-4">Preferences</h3>
+        <label className="flex items-center">
+          <input
+            type="checkbox"
+            defaultChecked={emailNotifications}
+            onChange={(e) => setEmailNotifications(e.target.checked)}
+            className="rounded border-gray-300"
+          />
+          <span className="ml-2 text-gray-700">Email notifications</span>
+        </label>
       </div>
     </div>
   );
