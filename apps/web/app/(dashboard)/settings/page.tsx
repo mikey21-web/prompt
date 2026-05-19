@@ -1,34 +1,44 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useUser } from "@clerk/nextjs";
+import { useQuery, useMutation } from 'convex/react';
+import { useUser } from '@clerk/nextjs';
+import { api } from '@promptforge/convex/convex/_generated/api';
 
 export default function SettingsPage() {
   const { user } = useUser();
-  const [emailNotifications, setEmailNotifications] = useState(true);
+  const convexUser = useQuery(api.users.getMe);
+  const updatePreferences = useMutation(api.users.updatePreferences);
+
+  const handleEmailToggle = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    await updatePreferences({ emailNotifications: e.target.checked });
+  };
+
+  if (convexUser === undefined) {
+    return <div className="animate-pulse">Loading...</div>;
+  }
 
   return (
-    <div className="max-w-2xl space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+    <div>
+      <h1 className="mb-8 text-3xl font-bold">Settings</h1>
 
       <div className="rounded-lg border bg-white p-6 shadow-sm">
-        <h3 className="font-semibold text-gray-900">Account</h3>
-        <p className="mt-4 text-sm text-gray-600">
+        <h2 className="mb-4 text-lg font-semibold">Account</h2>
+        <p className="text-gray-600">
           {user?.primaryEmailAddress?.emailAddress || 'No email found'}
         </p>
       </div>
 
-      <div className="rounded-lg border bg-white p-6 shadow-sm">
-        <h3 className="font-semibold text-gray-900 mb-4">Preferences</h3>
-        <label className="flex items-center">
+      <div className="mt-6 rounded-lg border bg-white p-6 shadow-sm">
+        <h2 className="mb-4 text-lg font-semibold">Preferences</h2>
+        <label htmlFor="email-notifications" className="flex items-center gap-2">
           <input
             id="email-notifications"
             type="checkbox"
-            checked={emailNotifications}
-            onChange={(e) => setEmailNotifications(e.target.checked)}
+            defaultChecked={convexUser?.preferences?.emailNotifications ?? true}
+            onChange={handleEmailToggle}
             className="rounded border-gray-300"
           />
-          <label htmlFor="email-notifications" className="ml-2 text-gray-700">Email notifications</label>
+          <span className="text-gray-700">Email notifications</span>
         </label>
       </div>
     </div>

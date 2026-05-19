@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useQuery } from 'convex/react';
+import { useQuery, useMutation } from 'convex/react';
 
 import HistoryPage from '@/app/(dashboard)/history/page';
 import TemplatesPage from '@/app/(dashboard)/templates/page';
@@ -80,7 +80,14 @@ describe('TemplatesPage', () => {
 });
 
 describe('SettingsPage', () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // settings page now needs convexUser to be defined
+    vi.mocked(useQuery).mockReturnValue({
+      _id: 'user_1',
+      preferences: { emailNotifications: true },
+    });
+  });
 
   it('renders the user email and the email-notifications checkbox', () => {
     render(<SettingsPage />);
@@ -92,7 +99,9 @@ describe('SettingsPage', () => {
     expect(checkbox.checked).toBe(true);
   });
 
-  it('toggles the email-notifications checkbox', async () => {
+  it('persists toggle changes via the updatePreferences mutation', async () => {
+    const updatePreferences = vi.fn().mockResolvedValue(undefined);
+    vi.mocked(useMutation).mockReturnValue(updatePreferences);
     const user = userEvent.setup();
     render(<SettingsPage />);
     const checkbox = screen.getByRole('checkbox', {
@@ -100,6 +109,15 @@ describe('SettingsPage', () => {
     }) as HTMLInputElement;
     await user.click(checkbox);
     expect(checkbox.checked).toBe(false);
+    expect(updatePreferences).toHaveBeenCalledWith({
+      emailNotifications: false,
+    });
+  });
+
+  it('shows a loading indicator while convex user is undefined', () => {
+    vi.mocked(useQuery).mockReturnValue(undefined);
+    const { container } = render(<SettingsPage />);
+    expect(container.querySelector('.animate-pulse')).toBeInTheDocument();
   });
 });
 

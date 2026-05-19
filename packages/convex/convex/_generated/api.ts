@@ -14,6 +14,7 @@ export const api = {
     current: {} as AnyQuery,
     create: {} as AnyMutation,
     updatePlan: {} as AnyMutation,
+    updatePreferences: {} as AnyMutation,
     getByClerkId: {} as AnyQuery,
     getMe: {} as AnyQuery,
     generateApiKey: {} as AnyMutation,

@@ -5,6 +5,7 @@ export const api = {
   users: {
     getMe: 'users.getMe',
     updatePlan: 'users.updatePlan',
+    updatePreferences: 'users.updatePreferences',
   },
   prompts: { getHistory: 'prompts.getHistory' },
   templates: { listMine: 'templates.listMine' },

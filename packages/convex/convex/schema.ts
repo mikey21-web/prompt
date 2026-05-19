@@ -11,6 +11,9 @@ export default defineSchema({
     dailyReset: v.number(),
     apiKey: v.optional(v.string()),
     stripeCustomerId: v.optional(v.string()),
+    preferences: v.optional(v.object({
+      emailNotifications: v.boolean(),
+    })),
     createdAt: v.number(),
   })
     .index("by_clerkId", ["clerkId"])

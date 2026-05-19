@@ -65,6 +65,7 @@ vi.mock('@promptforge/convex/convex/_generated/api', () => ({
     users: {
       getMe: 'users.getMe',
       updatePlan: 'users.updatePlan',
+      updatePreferences: 'users.updatePreferences',
     },
     prompts: { getHistory: 'prompts.getHistory' },
     templates: { listMine: 'templates.listMine' },
