@@ -5,7 +5,7 @@ import { api } from "@promptforge/convex/convex/_generated/api";
 import { useState } from "react";
 import Link from "next/link";
 
-export default function TeamPage() {
+export default function TemplatesPage() {
   const workspace = useQuery(api.workspaces.getMyWorkspace);
   const invite = useMutation(api.workspaces.inviteMember);
   const [email, setEmail] = useState("");

@@ -5,7 +5,7 @@ import { api } from "@promptforge/convex/convex/_generated/api";
 import { TemplateCard, type Template } from "@promptforge/ui";
 import { useState } from "react";
 
-export default function LibraryPage() {
+export default function OptimizePage() {
   const [tab, setTab] = useState<"community" | "mine">("community");
   const [tagFilter, setTagFilter] = useState("");
 
