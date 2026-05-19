@@ -36,8 +36,6 @@ export function OptimizeResult({
   };
 
   const savedTokens = originalTokens ? originalTokens - tokens.output : 0;
-  const savingPercent =
-    tokens.input > 0 ? ((savedTokens / tokens.input) * 100).toFixed(1) : '0';
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
@@ -64,7 +62,7 @@ export function OptimizeResult({
 
       {savedTokens > 0 && (
         <div className="mt-4">
-          <TokenSavings saved={savedTokens} percent={parseFloat(savingPercent)} />
+          <TokenSavings tokens={savedTokens} />
         </div>
       )}
 

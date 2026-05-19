@@ -1,8 +1,8 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock UI primitives so we don't depend on their internal shape (TokenSavings
-// has a prop mismatch with OptimizeResult that's not relevant here).
+// Mock UI primitives so component tests stay isolated from the internal
+// rendering shape of the shared @promptforge/ui package.
 vi.mock('@promptforge/ui', () => ({
   PromptDiff: ({ original, optimized }: any) => (
     <div data-testid="prompt-diff">
@@ -10,10 +10,8 @@ vi.mock('@promptforge/ui', () => ({
       <div data-testid="optimized">{optimized}</div>
     </div>
   ),
-  TokenSavings: ({ saved, percent }: any) => (
-    <div data-testid="token-savings">
-      Tokens saved: {saved} ({percent}%)
-    </div>
+  TokenSavings: ({ tokens }: any) => (
+    <div data-testid="token-savings">Tokens saved: {tokens}</div>
   ),
 }));
 
