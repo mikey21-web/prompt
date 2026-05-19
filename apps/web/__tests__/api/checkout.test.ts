@@ -4,6 +4,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 const authMock = vi.fn();
 const currentUserMock = vi.fn();
 const createCheckoutSessionMock = vi.fn();
+const limiterMock = vi.fn();
 
 vi.mock('@clerk/nextjs/server', () => ({
   auth: () => authMock(),
@@ -15,11 +16,19 @@ vi.mock('@/lib/billing', () => ({
     createCheckoutSessionMock(...args),
 }));
 
+vi.mock('@/lib/ratelimit', () => ({
+  checkoutLimiter: {
+    limit: (...args: unknown[]) => limiterMock(...args),
+  },
+  identifyRequest: () => 'test-identifier',
+}));
+
 // Minimal NextRequest mock — only `.json()` is used by the route
 type Body = Record<string, unknown> | undefined;
 function mockReq(body?: Body) {
   return {
     json: async () => body ?? {},
+    headers: { get: () => null },
   } as any;
 }
 
@@ -35,6 +44,12 @@ describe('POST /api/checkout', () => {
     createCheckoutSessionMock.mockResolvedValue(
       'https://checkout.stripe.com/c/pay/cs_test_123'
     );
+    limiterMock.mockResolvedValue({
+      success: true,
+      limit: 5,
+      remaining: 4,
+      reset: Date.now() + 60_000,
+    });
   });
 
   it('returns 401 when there is no auth', async () => {
@@ -88,5 +103,20 @@ describe('POST /api/checkout', () => {
     expect(res.status).toBe(400);
     const json = await res.json();
     expect(json.error).toBe('No email on file');
+  });
+
+  it('returns 429 when the rate limit is exceeded', async () => {
+    limiterMock.mockResolvedValueOnce({
+      success: false,
+      limit: 5,
+      remaining: 0,
+      reset: Date.now() + 60_000,
+    });
+    const res = await POST(mockReq({ plan: 'pro' }));
+    expect(res.status).toBe(429);
+    expect(res.headers.get('X-RateLimit-Limit')).toBe('5');
+    expect(res.headers.get('X-RateLimit-Remaining')).toBe('0');
+    const json = await res.json();
+    expect(json.error).toMatch(/too many requests/i);
   });
 });

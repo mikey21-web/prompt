@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/billing";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "@promptforge/convex/convex/_generated/api";
+import { logger } from "@/lib/logger";
 import type Stripe from "stripe";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 const convex = new ConvexHttpClient(
   process.env.NEXT_PUBLIC_CONVEX_URL ?? "https://placeholder.convex.cloud"
@@ -15,18 +16,15 @@ export async function POST(req: NextRequest) {
   const sig = req.headers.get("stripe-signature");
 
   if (!sig) {
-    console.error("Webhook error: Missing stripe-signature header");
-    return NextResponse.json(
-      { error: "Missing signature" },
-      { status: 400 }
-    );
+    logger.error("webhook.missing_signature");
+    return NextResponse.json({ error: "Missing signature" }, { status: 400 });
   }
 
   let event: Stripe.Event;
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   if (!webhookSecret) {
-    console.warn("STRIPE_WEBHOOK_SECRET not configured - webhook verification disabled");
-    // In development without a webhook secret, parse the event directly (unsafe - for dev only)
+    logger.warn("webhook.dev_mode_no_secret");
+    // In development without a webhook secret, parse the event directly (unsafe - dev only)
     try {
       event = JSON.parse(body);
     } catch {
@@ -40,7 +38,7 @@ export async function POST(req: NextRequest) {
       event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
     } catch (err) {
       const error = err instanceof Error ? err.message : "Unknown error";
-      console.error("Webhook signature verification failed:", error);
+      logger.error("webhook.signature_failed", { err: error });
       return NextResponse.json(
         { error: "Invalid signature" },
         { status: 400 }
@@ -59,21 +57,25 @@ export async function POST(req: NextRequest) {
         : session.customer?.id;
 
     if (!userId || !plan) {
-      console.error("Missing userId or plan in session metadata");
+      logger.error("webhook.missing_metadata", {
+        sessionId: session.id,
+        userId,
+        plan,
+      });
       return NextResponse.json({ received: true });
     }
 
     try {
-      console.log(`Processing checkout for user ${userId}, plan: ${plan}`);
+      logger.info("webhook.checkout_completed", { userId, plan });
       await convex.mutation(api.users.updatePlan, {
         clerkId: userId,
         plan,
         stripeCustomerId: customerId,
       });
-      console.log(`Successfully updated plan for user ${userId} to ${plan}`);
+      logger.info("webhook.plan_updated", { userId, plan });
     } catch (err) {
       const error = err instanceof Error ? err.message : "Unknown error";
-      console.error(`Failed to update plan for user ${userId}:`, error);
+      logger.error("webhook.plan_update_failed", { userId, err: error });
       // Continue processing - the webhook should return 200
     }
   }
@@ -86,13 +88,16 @@ export async function POST(req: NextRequest) {
         const subscription = await stripe.subscriptions.retrieve(
           invoice.subscription as string
         );
-        console.log(
-          `Invoice paid for subscription ${subscription.id}, customer: ${subscription.customer}`
-        );
-        // Plan update is already handled by checkout.session.completed
+        logger.info("webhook.invoice_paid", {
+          subscriptionId: subscription.id,
+          customer:
+            typeof subscription.customer === "string"
+              ? subscription.customer
+              : subscription.customer?.id,
+        });
       } catch (err) {
         const error = err instanceof Error ? err.message : "Unknown error";
-        console.error("Failed to retrieve subscription:", error);
+        logger.error("webhook.subscription_retrieve_failed", { err: error });
       }
     }
   }
@@ -105,10 +110,9 @@ export async function POST(req: NextRequest) {
         ? subscription.customer
         : subscription.customer?.id;
 
-    console.log(`Subscription cancelled for customer: ${customerId}`);
-    // NOTE: To fully implement downgrade on cancellation, we need a mutation
+    logger.info("webhook.subscription_cancelled", { customerId });
+    // NOTE: To fully implement downgrade on cancellation, add a Convex mutation
     // that looks up user by stripeCustomerId and downgrades to "free" plan.
-    // For now, we log the cancellation.
   }
 
   return NextResponse.json({ received: true });
