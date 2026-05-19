@@ -1,7 +1,7 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
+import { useUser } from "@clerk/nextjs";
 
 export default function SettingsPage() {
   const { user } = useUser();
@@ -14,7 +14,7 @@ export default function SettingsPage() {
       <div className="rounded-lg border bg-white p-6 shadow-sm">
         <h3 className="font-semibold text-gray-900">Account</h3>
         <p className="mt-4 text-sm text-gray-600">
-          {user?.primaryEmailAddress?.emailAddress}
+          {user?.primaryEmailAddress?.emailAddress || 'No email found'}
         </p>
       </div>
 
@@ -22,12 +22,13 @@ export default function SettingsPage() {
         <h3 className="font-semibold text-gray-900 mb-4">Preferences</h3>
         <label className="flex items-center">
           <input
+            id="email-notifications"
             type="checkbox"
-            defaultChecked={emailNotifications}
+            checked={emailNotifications}
             onChange={(e) => setEmailNotifications(e.target.checked)}
             className="rounded border-gray-300"
           />
-          <span className="ml-2 text-gray-700">Email notifications</span>
+          <label htmlFor="email-notifications" className="ml-2 text-gray-700">Email notifications</label>
         </label>
       </div>
     </div>

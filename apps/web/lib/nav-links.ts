@@ -4,6 +4,7 @@ import {
   History,
   Copy,
   Settings,
+  CreditCard,
 } from 'lucide-react';
 
 export const navLinks = [
@@ -26,6 +27,11 @@ export const navLinks = [
     href: '/templates',
     label: 'Templates',
     icon: Copy,
+  },
+  {
+    href: '/billing',
+    label: 'Billing',
+    icon: CreditCard,
   },
   {
     href: '/settings',

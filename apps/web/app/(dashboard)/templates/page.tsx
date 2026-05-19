@@ -1,19 +1,25 @@
 "use client";
 
 import { useQuery } from "convex/react";
+import { useUser } from "@clerk/nextjs";
 import { api } from "@promptforge/convex/convex/_generated/api";
 import { TemplateCard } from "@promptforge/ui";
 import Link from "next/link";
 
 export default function TemplatesPage() {
-  const templates = useQuery(api.templates.listMine);
+  const { user } = useUser();
+  const templates = useQuery(api.templates.listMine, user ? {} : "skip");
+
+  if (templates === undefined) {
+    return <div className="animate-pulse">Loading...</div>;
+  }
 
   return (
     <div className="max-w-6xl space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900">Templates</h1>
         <Link
-          href="/dashboard"
+          href="/templates/new"
           className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 text-sm font-medium transition-colors"
         >
           + New Template
@@ -26,20 +32,11 @@ export default function TemplatesPage() {
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {templates?.map((template) => (
+          {templates.map((template) => (
             <TemplateCard
               key={template._id}
-              template={{
-                _id: template._id,
-                title: template.title,
-                description: template.description,
-                tags: template.tags,
-                targetModel: template.targetModel,
-                votes: template.votes,
-                usageCount: template.usageCount,
-              }}
+              template={template}
               onUse={() => {}}
-              hasVoted={false}
             />
           ))}
         </div>

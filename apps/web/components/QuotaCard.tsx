@@ -60,7 +60,7 @@ export function QuotaCard() {
             You&apos;re using more than 80% of your daily quota. Consider upgrading your plan.
           </p>
           <Link
-            href="/pricing"
+            href="/billing"
             className="mt-2 inline-block text-sm font-medium text-amber-600 hover:text-amber-700 underline"
           >
             View upgrade options →

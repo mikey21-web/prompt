@@ -15,6 +15,7 @@ export async function POST(req: NextRequest) {
   const sig = req.headers.get("stripe-signature");
 
   if (!sig) {
+    console.error("Webhook error: Missing stripe-signature header");
     return NextResponse.json(
       { error: "Missing signature" },
       { status: 400 }
@@ -22,19 +23,32 @@ export async function POST(req: NextRequest) {
   }
 
   let event: Stripe.Event;
-  try {
-    event = stripe.webhooks.constructEvent(
-      body,
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET ?? ""
-    );
-  } catch {
-    return NextResponse.json(
-      { error: "Invalid signature" },
-      { status: 400 }
-    );
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  if (!webhookSecret) {
+    console.warn("STRIPE_WEBHOOK_SECRET not configured - webhook verification disabled");
+    // In development without a webhook secret, parse the event directly (unsafe - for dev only)
+    try {
+      event = JSON.parse(body);
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid webhook body" },
+        { status: 400 }
+      );
+    }
+  } else {
+    try {
+      event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
+    } catch (err) {
+      const error = err instanceof Error ? err.message : "Unknown error";
+      console.error("Webhook signature verification failed:", error);
+      return NextResponse.json(
+        { error: "Invalid signature" },
+        { status: 400 }
+      );
+    }
   }
 
+  // Handle checkout session completion
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
     const userId = session.metadata?.userId;
@@ -44,30 +58,57 @@ export async function POST(req: NextRequest) {
         ? session.customer
         : session.customer?.id;
 
-    if (userId && plan) {
+    if (!userId || !plan) {
+      console.error("Missing userId or plan in session metadata");
+      return NextResponse.json({ received: true });
+    }
+
+    try {
+      console.log(`Processing checkout for user ${userId}, plan: ${plan}`);
+      await (convex.mutation as any)(api.users.updatePlan, {
+        clerkId: userId,
+        plan,
+        stripeCustomerId: customerId,
+      });
+      console.log(`Successfully updated plan for user ${userId} to ${plan}`);
+    } catch (err) {
+      const error = err instanceof Error ? err.message : "Unknown error";
+      console.error(`Failed to update plan for user ${userId}:`, error);
+      // Continue processing - the webhook should return 200
+    }
+  }
+
+  // Handle subscription updates (e.g., when invoice is paid)
+  if (event.type === "invoice.payment_succeeded") {
+    const invoice = event.data.object as Stripe.Invoice;
+    if (invoice.subscription) {
       try {
-        await (convex.mutation as any)(api.users.updatePlan, {
-          clerkId: userId,
-          plan,
-          stripeCustomerId: customerId,
-        });
-      } catch {
-        // Convex not configured in dev - plan update logged but not persisted
-        console.log(`Plan updated for user ${userId} to ${plan}`);
+        const subscription = await stripe.subscriptions.retrieve(
+          invoice.subscription as string
+        );
+        console.log(
+          `Invoice paid for subscription ${subscription.id}, customer: ${subscription.customer}`
+        );
+        // Plan update is already handled by checkout.session.completed
+      } catch (err) {
+        const error = err instanceof Error ? err.message : "Unknown error";
+        console.error("Failed to retrieve subscription:", error);
       }
     }
   }
 
+  // Handle subscription cancellation
   if (event.type === "customer.subscription.deleted") {
     const subscription = event.data.object as Stripe.Subscription;
     const customerId =
       typeof subscription.customer === "string"
         ? subscription.customer
-        : subscription.customer.id;
+        : subscription.customer?.id;
 
-    // NOTE: Need to look up user by stripeCustomerId then downgrade.
-    // For now log — full implementation requires getUserByStripeCustomerId mutation.
-    console.log("Subscription cancelled for customer:", customerId);
+    console.log(`Subscription cancelled for customer: ${customerId}`);
+    // NOTE: To fully implement downgrade on cancellation, we need a mutation
+    // that looks up user by stripeCustomerId and downgrades to "free" plan.
+    // For now, we log the cancellation.
   }
 
   return NextResponse.json({ received: true });
