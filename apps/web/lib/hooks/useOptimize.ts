@@ -22,13 +22,16 @@ export function useOptimize() {
     setLoading(true);
     setError(null);
     try {
-      // Normalize model format: convert "gpt-4o-mini" to "gpt4o" for Convex validation
+      // Normalize model format: convert "gpt-4o-mini" to "gpt4o" for Convex validation.
+      // Convex schema accepts a different union than @promptforge/core, so we
+      // normalize at the boundary and cast — values are validated server-side.
       const normalizedModel = targetModel?.replace(/-/g, '') || 'gpt4o';
 
       const res = await optimize({
         prompt,
         mode,
-        targetModel: normalizedModel as TargetModel,
+        targetModel: normalizedModel as never,
+        source: 'web',
       });
       setResult(res);
       return res;

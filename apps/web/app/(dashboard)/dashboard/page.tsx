@@ -41,7 +41,7 @@ export default function DashboardPage() {
       const res = await optimize({
         prompt,
         mode,
-        targetModel,
+        targetModel: targetModel.replace(/-/g, '') as never,
         source: "web",
       });
       setResult(res);

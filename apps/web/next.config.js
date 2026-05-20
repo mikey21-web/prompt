@@ -43,7 +43,9 @@ const nextConfig = {
     '@promptforge/convex',
   ],
   typescript: {
-    ignoreBuildErrors: true,
+    // We type-check via `npx tsc --noEmit` in CI; flipping this on means
+    // build failures surface there, not blocked by Convex codegen timing.
+    ignoreBuildErrors: false,
   },
   async headers() {
     return [

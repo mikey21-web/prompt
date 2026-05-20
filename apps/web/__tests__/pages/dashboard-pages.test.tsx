@@ -9,7 +9,9 @@ import SettingsPage from '@/app/(dashboard)/settings/page';
 import BillingPage from '@/app/(dashboard)/billing/page';
 
 describe('HistoryPage', () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('shows the loading state when history is undefined', () => {
     vi.mocked(useQuery).mockReturnValue(undefined);
@@ -45,7 +47,9 @@ describe('HistoryPage', () => {
 });
 
 describe('TemplatesPage', () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('shows the loading state when templates is undefined', () => {
     vi.mocked(useQuery).mockReturnValue(undefined);
@@ -101,7 +105,7 @@ describe('SettingsPage', () => {
 
   it('persists toggle changes via the updatePreferences mutation', async () => {
     const updatePreferences = vi.fn().mockResolvedValue(undefined);
-    vi.mocked(useMutation).mockReturnValue(updatePreferences);
+    vi.mocked(useMutation).mockReturnValue(updatePreferences as any);
     const user = userEvent.setup();
     render(<SettingsPage />);
     const checkbox = screen.getByRole('checkbox', {
@@ -122,7 +126,9 @@ describe('SettingsPage', () => {
 });
 
 describe('BillingPage', () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('renders the three plans (Free, Pro, Team)', () => {
     vi.mocked(useQuery).mockReturnValue({

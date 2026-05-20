@@ -10,7 +10,24 @@ import {
   type Tone,
 } from "@promptforge/core";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+// Lazy-initialize OpenAI so module load doesn't fail when OPENAI_API_KEY is
+// missing (e.g. during the very first `convex push` before secrets are set).
+// Each action invocation reads the env var fresh, which also lets you rotate
+// the key without redeploying.
+let _openai: OpenAI | null = null;
+function getOpenAI(): OpenAI {
+  if (!_openai) {
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      throw new Error(
+        "OPENAI_API_KEY is not configured on this Convex deployment. " +
+          "Run: npx convex env set OPENAI_API_KEY <key>"
+      );
+    }
+    _openai = new OpenAI({ apiKey });
+  }
+  return _openai;
+}
 
 function selectModel(mode: Mode): string {
   if (mode === "qa" || mode === "enhance") return "gpt-4o";
@@ -77,7 +94,7 @@ export const optimizePrompt = action({
         ? `Here is my prompt: "${args.prompt}"\n\nAsk me 3 clarifying questions to better understand my needs. Number them 1-3.`
         : args.prompt;
 
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAI().chat.completions.create({
       model,
       messages: [
         { role: "system", content: systemPrompt },
@@ -189,7 +206,7 @@ export const optimizeViaApi = action({
     );
     const model = selectModel(mode as Mode);
 
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAI().chat.completions.create({
       model,
       messages: [
         { role: "system", content: systemPrompt },

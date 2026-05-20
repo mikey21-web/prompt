@@ -11,7 +11,7 @@ describe('OptimizeForm', () => {
   });
 
   it('renders 3 mode buttons (compress, enhance, rewrite)', () => {
-    render(<OptimizeForm onSubmit={onSubmit} loading={false} />);
+    render(<OptimizeForm onSubmit={onSubmit as any} loading={false} />);
     expect(screen.getByText('Compress')).toBeInTheDocument();
     expect(screen.getByText('Enhance')).toBeInTheDocument();
     expect(screen.getByText('Rewrite')).toBeInTheDocument();
@@ -19,7 +19,7 @@ describe('OptimizeForm', () => {
 
   it('submits the form with prompt + mode + model', async () => {
     const user = userEvent.setup();
-    render(<OptimizeForm onSubmit={onSubmit} loading={false} />);
+    render(<OptimizeForm onSubmit={onSubmit as any} loading={false} />);
     await user.type(
       screen.getByLabelText(/your prompt/i),
       'Write a poem about rain'
@@ -36,14 +36,14 @@ describe('OptimizeForm', () => {
   });
 
   it('disables submit button on empty prompt', () => {
-    render(<OptimizeForm onSubmit={onSubmit} loading={false} />);
+    render(<OptimizeForm onSubmit={onSubmit as any} loading={false} />);
     const button = screen.getByRole('button', { name: /optimize prompt/i });
     expect(button).toBeDisabled();
   });
 
   it('switches the active mode when a different mode is clicked', async () => {
     const user = userEvent.setup();
-    render(<OptimizeForm onSubmit={onSubmit} loading={false} />);
+    render(<OptimizeForm onSubmit={onSubmit as any} loading={false} />);
     await user.type(screen.getByLabelText(/your prompt/i), 'hello');
     await user.click(screen.getByText('Enhance'));
     await user.click(
@@ -53,7 +53,7 @@ describe('OptimizeForm', () => {
   });
 
   it('shows both target models in the dropdown', () => {
-    render(<OptimizeForm onSubmit={onSubmit} loading={false} />);
+    render(<OptimizeForm onSubmit={onSubmit as any} loading={false} />);
     const select = screen.getByLabelText(/target model/i) as HTMLSelectElement;
     const options = Array.from(select.options).map((o) => o.value);
     expect(options).toContain('gpt-4o-mini');
@@ -61,16 +61,17 @@ describe('OptimizeForm', () => {
   });
 
   it('defaults to gpt-4o-mini', () => {
-    render(<OptimizeForm onSubmit={onSubmit} loading={false} />);
+    render(<OptimizeForm onSubmit={onSubmit as any} loading={false} />);
     const select = screen.getByLabelText(/target model/i) as HTMLSelectElement;
     expect(select.value).toBe('gpt-4o-mini');
   });
 
   it('shows loading text when loading is true', () => {
-    render(<OptimizeForm onSubmit={onSubmit} loading={true} />);
+    render(<OptimizeForm onSubmit={onSubmit as any} loading={true} />);
     expect(
       screen.getByRole('button', { name: /optimize prompt/i })
     ).toHaveTextContent(/optimizing/i);
     expect(screen.getByLabelText(/your prompt/i)).toBeDisabled();
   });
 });
+

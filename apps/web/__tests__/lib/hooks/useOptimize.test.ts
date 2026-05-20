@@ -9,7 +9,7 @@ describe('useOptimize', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     optimizeMock = vi.fn();
-    vi.mocked(useAction).mockReturnValue(optimizeMock);
+    vi.mocked(useAction).mockReturnValue(optimizeMock as any);
   });
 
   it('has the correct initial state', () => {
@@ -92,6 +92,7 @@ describe('useOptimize', () => {
       prompt: 'p',
       mode: 'compress',
       targetModel: 'gpt4omini',
+      source: 'web',
     });
 
     await act(async () => {
@@ -101,6 +102,7 @@ describe('useOptimize', () => {
       prompt: 'p',
       mode: 'enhance',
       targetModel: 'gpt4o',
+      source: 'web',
     });
 
     // No model provided → defaults to 'gpt4o'
@@ -111,6 +113,7 @@ describe('useOptimize', () => {
       prompt: 'p',
       mode: 'compress',
       targetModel: 'gpt4o',
+      source: 'web',
     });
   });
 });
