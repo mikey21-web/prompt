@@ -6,10 +6,7 @@ import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
-
-const convex = new ConvexHttpClient(
-  process.env.NEXT_PUBLIC_CONVEX_URL ?? "https://placeholder.convex.cloud"
-);
+export const revalidate = 0;
 
 /**
  * REST shim for Convex `promptforge.showdown` action.
@@ -35,6 +32,16 @@ export async function POST(req: NextRequest) {
         { status: 400, headers: cors }
       );
     }
+    
+    if (!process.env.NEXT_PUBLIC_CONVEX_URL) {
+      return NextResponse.json(
+        { error: "Convex not configured" },
+        { status: 500, headers: cors }
+      );
+    }
+    
+    const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL);
+    
     const token = await getToken({ template: "convex" });
     if (token) convex.setAuth(token);
     const result = await convex.action(api.promptforge.showdown, {

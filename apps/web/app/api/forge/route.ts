@@ -1,15 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { ConvexHttpClient } from "convex/browser";
 import { api } from "@promptforge/convex/convex/_generated/api";
 import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
-
-const convex = new ConvexHttpClient(
-  process.env.NEXT_PUBLIC_CONVEX_URL ?? "https://placeholder.convex.cloud"
-);
+export const revalidate = 0;
 
 /**
  * Public REST shim around the `promptforge.translate` Convex action.
@@ -39,6 +35,17 @@ export async function POST(req: NextRequest) {
         { status: 400, headers: cors }
       );
     }
+
+    if (!process.env.NEXT_PUBLIC_CONVEX_URL) {
+      return NextResponse.json(
+        { error: "Convex not configured" },
+        { status: 500, headers: cors }
+      );
+    }
+
+    // Dynamically import to avoid build-time issues
+    const { ConvexHttpClient } = await import("convex/browser");
+    const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL);
 
     // Forward Clerk JWT to Convex so ctx.auth.getUserIdentity() resolves
     const token = await getToken({ template: "convex" });

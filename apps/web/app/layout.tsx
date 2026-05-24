@@ -3,6 +3,9 @@ import { Providers } from "./providers";
 import { AnalyticsLoader } from "@/components/AnalyticsLoader";
 import "./globals.css";
 
+// Disable static generation for all pages — Clerk + Convex require runtime
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "PromptForge — Better Prompts. Less Tokens.",
   description:

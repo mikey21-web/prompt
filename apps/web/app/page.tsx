@@ -1,3 +1,5 @@
+'use client';
+
 import Link from "next/link";
 import { SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import { LandingTrustStrip } from "@/components/LandingTrustStrip";
