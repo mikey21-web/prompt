@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^5.0.0",
+    "@google/generative-ai": "^0.24.1",
     "@promptforge/convex": "*",
     "@promptforge/core": "*",
     "@promptforge/ui": "*",

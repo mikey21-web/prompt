@@ -191,4 +191,29 @@ export default defineSchema({
   })
     .index("by_thread", ["threadId"])
     .index("by_thread_version", ["threadId", "versionNum"]),
+
+  /**
+   * Custom per-user style guides. Override or extend the built-in system
+   * style guides for any target model. The `rules` and `avoid` arrays are
+   * appended to the built-in guide during synthesis.
+   */
+  customStyleGuides: defineTable({
+    userId: v.id("users"),
+    /** Target model this guide applies to. */
+    targetModel: v.string(),
+    /** Human-readable name for this guide. */
+    name: v.string(),
+    /** Additional rules to append to the built-in guide. */
+    rules: v.array(v.string()),
+    /** Additional anti-patterns to append to the built-in guide. */
+    avoid: v.array(v.string()),
+    /** Optional format override — replaces the built-in format skeleton. */
+    formatOverride: v.optional(v.string()),
+    /** Whether this guide is active (only one per target can be active). */
+    active: v.boolean(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_userId", ["userId"])
+    .index("by_userId_target", ["userId", "targetModel"]),
 });

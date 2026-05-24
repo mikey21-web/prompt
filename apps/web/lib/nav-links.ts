@@ -1,6 +1,5 @@
 import {
   BarChart3,
-  Zap,
   Wand2,
   Swords,
   Microscope,
@@ -11,6 +10,8 @@ import {
   Copy,
   Settings,
   CreditCard,
+  Activity,
+  BookOpen,
 } from 'lucide-react';
 
 export const navLinks = [
@@ -50,12 +51,18 @@ export const navLinks = [
     label: 'Threads',
     icon: GitBranch,
   },
-  // ----- Original tools -----
+  // ----- Analytics & customization -----
   {
-    href: '/optimize',
-    label: 'Optimize (legacy)',
-    icon: Zap,
+    href: '/observability',
+    label: 'Observability',
+    icon: Activity,
   },
+  {
+    href: '/style-guides',
+    label: 'Style Guides',
+    icon: BookOpen,
+  },
+  // ----- Account -----
   {
     href: '/history',
     label: 'History',

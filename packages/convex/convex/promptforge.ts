@@ -88,13 +88,32 @@ async function extractIntent(input: string): Promise<Intent> {
 /**
  * Synthesize an optimized prompt for a specific target model from an Intent.
  * Routes to the right LLM provider when available; falls back to OpenAI.
+ * Optionally merges in a user's custom style guide overrides.
  */
 async function synthesizePrompt(
   target: ModelId,
-  intent: Intent
+  intent: Intent,
+  customGuide?: { rules: string[]; avoid: string[]; formatOverride?: string } | null
 ): Promise<string> {
   const meta = MODELS[target];
-  const sys = buildSynthesisPrompt(target);
+  let sys = buildSynthesisPrompt(target);
+
+  // Merge custom user style guide if provided
+  if (customGuide) {
+    if (customGuide.formatOverride) {
+      sys = sys.replace(
+        /Format specification:\n[\s\S]*?\n\nHard rules:/,
+        `Format specification:\n${customGuide.formatOverride}\n\nHard rules:`
+      );
+    }
+    if (customGuide.rules.length > 0) {
+      sys += `\n\nAdditional user-defined rules (MUST follow):\n${customGuide.rules.map((r) => `- ${r}`).join("\n")}`;
+    }
+    if (customGuide.avoid.length > 0) {
+      sys += `\n\nAdditional user-defined anti-patterns (NEVER do):\n${customGuide.avoid.map((a) => `- ${a}`).join("\n")}`;
+    }
+  }
+
   const user = `Intent JSON:\n\`\`\`json\n${JSON.stringify(intent, null, 2)}\n\`\`\`\n\nProduce the optimized prompt now.`;
 
   // Use the provider that owns the target model when we have keys for it.
@@ -182,7 +201,14 @@ export const translate = action({
     const target =
       (args.target as ModelId | undefined) ??
       defaultTargetForModality(intent.modality);
-    const optimized = await synthesizePrompt(target, intent);
+
+    // Look up active custom style guide for this target
+    const customGuide = await ctx.runQuery(
+      internal.styleGuides.getActiveGuideForTargetInternal,
+      { clerkId: identity.subject, targetModel: target }
+    );
+
+    const optimized = await synthesizePrompt(target, intent, customGuide);
 
     const tokensIn = approxTokens(args.input);
     const tokensOut = approxTokens(optimized);

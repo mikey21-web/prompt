@@ -1,0 +1,125 @@
+{
+  "name": "promptforge",
+  "displayName": "PromptForge",
+  "description": "Translate plain English into the optimal prompt for any AI model — Claude, GPT, Gemini, Midjourney, Sora, and more.",
+  "version": "0.1.0",
+  "publisher": "promptforge",
+  "private": true,
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["AI", "Other"],
+  "keywords": ["ai", "prompt", "claude", "gpt", "gemini", "midjourney", "cursor"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./dist/extension.js",
+  "icon": "icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mikey21-web/prompt"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "promptforge.forge",
+        "title": "PromptForge: Forge selection",
+        "shortTitle": "Forge"
+      },
+      {
+        "command": "promptforge.showdown",
+        "title": "PromptForge: Showdown (all models)",
+        "shortTitle": "Showdown"
+      },
+      {
+        "command": "promptforge.reverse",
+        "title": "PromptForge: Reverse (prompt → English)",
+        "shortTitle": "Reverse"
+      },
+      {
+        "command": "promptforge.setApiKey",
+        "title": "PromptForge: Set API key"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "promptforge.forge",
+          "when": "editorHasSelection",
+          "group": "promptforge@1"
+        },
+        {
+          "command": "promptforge.showdown",
+          "when": "editorHasSelection",
+          "group": "promptforge@2"
+        },
+        {
+          "command": "promptforge.reverse",
+          "when": "editorHasSelection",
+          "group": "promptforge@3"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "promptforge.forge",
+        "key": "ctrl+shift+p ctrl+shift+f",
+        "mac": "cmd+shift+p cmd+shift+f",
+        "when": "editorHasSelection"
+      }
+    ],
+    "configuration": {
+      "title": "PromptForge",
+      "properties": {
+        "promptforge.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Your PromptForge API key. Get one at https://promptforge.dev/settings",
+          "markdownDescription": "Your PromptForge API key. Get one at [promptforge.dev/settings](https://promptforge.dev/settings)"
+        },
+        "promptforge.apiUrl": {
+          "type": "string",
+          "default": "https://promptforge.dev",
+          "description": "PromptForge API base URL (override for self-hosted)"
+        },
+        "promptforge.defaultTarget": {
+          "type": "string",
+          "default": "auto",
+          "enum": [
+            "auto",
+            "claude-sonnet-4.5",
+            "claude-opus-4.1",
+            "gpt-4o",
+            "gpt-4o-mini",
+            "gemini-2.5-pro",
+            "midjourney-v7",
+            "sora-2",
+            "suno-v4"
+          ],
+          "description": "Default target model for Forge command"
+        },
+        "promptforge.insertMode": {
+          "type": "string",
+          "default": "replace",
+          "enum": ["replace", "below", "clipboard"],
+          "enumDescriptions": [
+            "Replace the selected text with the optimized prompt",
+            "Insert the optimized prompt below the selection",
+            "Copy to clipboard only"
+          ],
+          "description": "How to insert the forged prompt"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --minify",
+    "dev": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --watch",
+    "package": "vsce package",
+    "lint": "eslint src"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.0",
+    "@types/vscode": "^1.85.0",
+    "esbuild": "^0.21.0",
+    "typescript": "^5.4.0"
+  }
+}

@@ -227,6 +227,16 @@ export default function ShowdownPage() {
                 <Send className="-ml-1 mr-2 h-4 w-4" />
                 Tweet this
               </button>
+              {shareSlug && (
+                <a
+                  href={`/s/${shareSlug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-violet-600 hover:text-violet-800 underline"
+                >
+                  View public page →
+                </a>
+              )}
             </>
           )}
         </div>

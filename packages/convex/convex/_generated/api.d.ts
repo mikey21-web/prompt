@@ -9,12 +9,15 @@
  */
 
 import type * as http from "../http.js";
+import type * as observability from "../observability.js";
 import type * as optimize from "../optimize.js";
 import type * as promptforge from "../promptforge.js";
 import type * as promptforge_mutations from "../promptforge_mutations.js";
 import type * as prompts from "../prompts.js";
+import type * as publicStats from "../publicStats.js";
 import type * as seedLibrary from "../seedLibrary.js";
 import type * as shares from "../shares.js";
+import type * as styleGuides from "../styleGuides.js";
 import type * as templates from "../templates.js";
 import type * as threads from "../threads.js";
 import type * as usageLogs from "../usageLogs.js";
@@ -29,12 +32,15 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   http: typeof http;
+  observability: typeof observability;
   optimize: typeof optimize;
   promptforge: typeof promptforge;
   promptforge_mutations: typeof promptforge_mutations;
   prompts: typeof prompts;
+  publicStats: typeof publicStats;
   seedLibrary: typeof seedLibrary;
   shares: typeof shares;
+  styleGuides: typeof styleGuides;
   templates: typeof templates;
   threads: typeof threads;
   usageLogs: typeof usageLogs;
