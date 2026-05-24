@@ -1,0 +1,43 @@
+{
+  "name": "@promptforge/cli",
+  "version": "0.1.0",
+  "description": "PromptForge — translate plain English into the optimal prompt for any AI model",
+  "type": "module",
+  "bin": {
+    "promptforge": "./dist/cli.js",
+    "pf": "./dist/cli.js"
+  },
+  "main": "./dist/cli.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "ai",
+    "prompt",
+    "claude",
+    "gpt",
+    "gemini",
+    "midjourney",
+    "sora",
+    "prompt-engineering",
+    "cli"
+  ],
+  "license": "MIT",
+  "homepage": "https://promptforge.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mikey21-web/prompt"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.0",
+    "typescript": "^5.4.0"
+  }
+}

@@ -145,4 +145,15 @@ export default defineSchema({
   })
     .index("by_slug", ["slug"])
     .index("by_user", ["userId"]),
+
+  abVotes: defineTable({
+    userId: v.id("users"),
+    rawInput: v.string(),
+    optimized: v.string(),
+    target: v.string(),
+    winner: v.union(v.literal("raw"), v.literal("optimized"), v.literal("tie")),
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_target", ["target"]),
 });

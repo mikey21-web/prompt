@@ -293,3 +293,197 @@ export const rateRun = action({
     });
   },
 });
+
+
+/**
+ * Run a prompt against a specific model and return the actual response.
+ * Used by the Showdown "Run" buttons and the A/B eval flow.
+ *
+ * For image/video/audio targets we don't generate the artifact — we just
+ * return a label saying so. Calling those APIs from Convex is a separate
+ * piece of work (cost, polling, asset hosting).
+ */
+export const run = action({
+  args: {
+    prompt: v.string(),
+    target: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthenticated");
+
+    const target = args.target as ModelId;
+    const meta = MODELS[target];
+    if (!meta) throw new Error(`Unknown target: ${args.target}`);
+    if (!meta.callable || meta.modality !== "text") {
+      return {
+        target,
+        modality: meta.modality,
+        callable: false,
+        response:
+          `${meta.label} doesn't run inline here. Copy the prompt into ${meta.label} directly to generate the ${meta.modality} output.`,
+      };
+    }
+
+    await ctx.runMutation(internal.users.checkAndIncrementUsage, {
+      clerkId: identity.subject,
+    });
+
+    if (target === "claude-sonnet-4.5" || target === "claude-opus-4.1") {
+      const claude = getAnthropic();
+      if (!claude) {
+        return {
+          target,
+          modality: meta.modality,
+          callable: false,
+          response:
+            "ANTHROPIC_API_KEY not set on this deployment. Configure it to enable live runs for Claude.",
+        };
+      }
+      const model =
+        target === "claude-opus-4.1"
+          ? "claude-opus-4-1-20250805"
+          : "claude-sonnet-4-5-20250514";
+      const res = await claude.messages.create({
+        model,
+        max_tokens: 1500,
+        messages: [{ role: "user", content: args.prompt }],
+      });
+      const block = res.content[0];
+      const text = block && block.type === "text" ? block.text : "";
+      return { target, modality: meta.modality, callable: true, response: text };
+    }
+
+    if (target === "gemini-2.5-pro" || target === "gemini-2.5-flash") {
+      const gemini = getGemini();
+      if (!gemini) {
+        return {
+          target,
+          modality: meta.modality,
+          callable: false,
+          response:
+            "GEMINI_API_KEY not set on this deployment. Configure it to enable live runs for Gemini.",
+        };
+      }
+      const modelName =
+        target === "gemini-2.5-pro" ? "gemini-2.5-pro" : "gemini-2.5-flash";
+      const model = gemini.getGenerativeModel({ model: modelName });
+      const res = await model.generateContent(args.prompt);
+      return {
+        target,
+        modality: meta.modality,
+        callable: true,
+        response: res.response.text(),
+      };
+    }
+
+    // OpenAI default
+    const openaiModel =
+      target === "gpt-4o" || target === "gpt-4o-mini" ? target : "gpt-4o-mini";
+    const res = await getOpenAI().chat.completions.create({
+      model: openaiModel,
+      messages: [{ role: "user", content: args.prompt }],
+      max_tokens: 1500,
+    });
+    const text = res.choices[0]?.message?.content ?? "";
+    return { target, modality: meta.modality, callable: true, response: text };
+  },
+});
+
+/**
+ * A/B compare: run the user's raw input AND the optimized version against
+ * the same model. Used by the eval flow to capture user preference.
+ */
+export const abCompare = action({
+  args: {
+    rawInput: v.string(),
+    optimized: v.string(),
+    target: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthenticated");
+
+    const target = args.target as ModelId;
+    const meta = MODELS[target];
+    if (!meta || !meta.callable || meta.modality !== "text") {
+      throw new Error(
+        `A/B compare requires a callable text model. ${args.target} is not.`
+      );
+    }
+
+    // One quota tick covers two model calls — A/B is a power-user feature.
+    await ctx.runMutation(internal.users.checkAndIncrementUsage, {
+      clerkId: identity.subject,
+    });
+
+    async function runOne(prompt: string): Promise<string> {
+      if (target === "claude-sonnet-4.5" || target === "claude-opus-4.1") {
+        const claude = getAnthropic();
+        if (!claude) throw new Error("ANTHROPIC_API_KEY not configured");
+        const model =
+          target === "claude-opus-4.1"
+            ? "claude-opus-4-1-20250805"
+            : "claude-sonnet-4-5-20250514";
+        const r = await claude.messages.create({
+          model,
+          max_tokens: 1500,
+          messages: [{ role: "user", content: prompt }],
+        });
+        const block = r.content[0];
+        return block && block.type === "text" ? block.text : "";
+      }
+      if (target === "gemini-2.5-pro" || target === "gemini-2.5-flash") {
+        const gemini = getGemini();
+        if (!gemini) throw new Error("GEMINI_API_KEY not configured");
+        const modelName =
+          target === "gemini-2.5-pro" ? "gemini-2.5-pro" : "gemini-2.5-flash";
+        const model = gemini.getGenerativeModel({ model: modelName });
+        const r = await model.generateContent(prompt);
+        return r.response.text();
+      }
+      const openaiModel =
+        target === "gpt-4o" || target === "gpt-4o-mini"
+          ? target
+          : "gpt-4o-mini";
+      const r = await getOpenAI().chat.completions.create({
+        model: openaiModel,
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 1500,
+      });
+      return r.choices[0]?.message?.content ?? "";
+    }
+
+    const [a, b] = await Promise.all([
+      runOne(args.rawInput),
+      runOne(args.optimized),
+    ]);
+    return { rawResponse: a, optimizedResponse: b, target };
+  },
+});
+
+/**
+ * Record an A/B preference. The pair (raw vs optimized) gets stored as an
+ * eval datapoint we can use to compute "we beat raw N% of the time"
+ * marketing claims, and as fine-tune data later.
+ */
+export const recordAbVote = action({
+  args: {
+    rawInput: v.string(),
+    optimized: v.string(),
+    target: v.string(),
+    winner: v.union(v.literal("raw"), v.literal("optimized"), v.literal("tie")),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthenticated");
+
+    await ctx.runMutation(internal.promptforge_mutations.saveAbVote, {
+      clerkId: identity.subject,
+      rawInput: args.rawInput,
+      optimized: args.optimized,
+      target: args.target,
+      winner: args.winner,
+    });
+  },
+});

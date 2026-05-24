@@ -77,3 +77,29 @@ export const recordRating = internalMutation({
     });
   },
 });
+
+export const saveAbVote = internalMutation({
+  args: {
+    clerkId: v.string(),
+    rawInput: v.string(),
+    optimized: v.string(),
+    target: v.string(),
+    winner: v.union(v.literal("raw"), v.literal("optimized"), v.literal("tie")),
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", args.clerkId))
+      .unique();
+    if (!user) throw new Error("User not found");
+
+    return await ctx.db.insert("abVotes", {
+      userId: user._id,
+      rawInput: args.rawInput,
+      optimized: args.optimized,
+      target: args.target,
+      winner: args.winner,
+      createdAt: Date.now(),
+    });
+  },
+});

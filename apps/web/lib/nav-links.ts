@@ -5,6 +5,7 @@ import {
   Swords,
   Microscope,
   Library,
+  Scale,
   History,
   Copy,
   Settings,
@@ -27,6 +28,11 @@ export const navLinks = [
     href: '/showdown',
     label: 'Showdown',
     icon: Swords,
+  },
+  {
+    href: '/eval',
+    label: 'Eval',
+    icon: Scale,
   },
   {
     href: '/reverse',

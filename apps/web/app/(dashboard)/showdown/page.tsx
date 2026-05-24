@@ -9,15 +9,35 @@ import {
   type ModelId,
   type Modality,
 } from '@promptforge/core';
-import { Copy, Check, Share2, Swords } from 'lucide-react';
+import {
+  Copy,
+  Check,
+  Share2,
+  Swords,
+  Play,
+  Loader2,
+  Send,
+} from 'lucide-react';
+
+interface ShowdownOutput {
+  target: ModelId;
+  optimized: string;
+  error: string | null;
+}
 
 interface ShowdownResult {
   intent: { modality: Modality; subject?: string };
-  outputs: { target: ModelId; optimized: string; error: string | null }[];
+  outputs: ShowdownOutput[];
+}
+
+interface RunResult {
+  callable: boolean;
+  response: string;
 }
 
 export default function ShowdownPage() {
   const showdown = useAction(api.promptforge.showdown);
+  const runPrompt = useAction(api.promptforge.run);
   const createShare = useMutation(api.shares.createShare);
 
   const [input, setInput] = useState('');
@@ -30,6 +50,10 @@ export default function ShowdownPage() {
   const [shareSlug, setShareSlug] = useState<string | null>(null);
   const [copiedTarget, setCopiedTarget] = useState<ModelId | null>(null);
 
+  // Per-target run state
+  const [runs, setRuns] = useState<Record<string, RunResult | undefined>>({});
+  const [running, setRunning] = useState<Set<ModelId>>(new Set());
+
   const toggle = (id: ModelId) => {
     const next = new Set(selected);
     if (next.has(id)) next.delete(id);
@@ -37,7 +61,7 @@ export default function ShowdownPage() {
     setSelected(next);
   };
 
-  const run = async () => {
+  const start = async () => {
     if (!input.trim() || input.trim().length < 3) {
       setError('Type at least a few words.');
       return;
@@ -50,6 +74,7 @@ export default function ShowdownPage() {
     setError(null);
     setResult(null);
     setShareSlug(null);
+    setRuns({});
     try {
       const res = (await showdown({
         input,
@@ -76,10 +101,51 @@ export default function ShowdownPage() {
     );
   };
 
+  const tweet = async () => {
+    if (!result) return;
+    let slug = shareSlug;
+    if (!slug) {
+      const created = await createShare({
+        input,
+        intentJson: JSON.stringify(result.intent),
+        outputsJson: JSON.stringify(result.outputs),
+      });
+      slug = created.slug;
+      setShareSlug(slug);
+    }
+    const url = `${window.location.origin}/s/${slug}`;
+    const text = `Same prompt, every AI model's native format. Side by side. Made with @PromptForge\n\n"${input.slice(0, 80)}"`;
+    const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+    window.open(tweetUrl, '_blank', 'width=550,height=420');
+  };
+
   const copy = async (target: ModelId, text: string) => {
     await navigator.clipboard.writeText(text);
     setCopiedTarget(target);
     setTimeout(() => setCopiedTarget(null), 2000);
+  };
+
+  const run = async (target: ModelId, prompt: string) => {
+    if (running.has(target)) return;
+    setRunning((prev) => new Set(prev).add(target));
+    try {
+      const res = (await runPrompt({ prompt, target })) as RunResult;
+      setRuns((prev) => ({ ...prev, [target]: res }));
+    } catch (e) {
+      setRuns((prev) => ({
+        ...prev,
+        [target]: {
+          callable: false,
+          response: e instanceof Error ? e.message : 'Run failed.',
+        },
+      }));
+    } finally {
+      setRunning((prev) => {
+        const next = new Set(prev);
+        next.delete(target);
+        return next;
+      });
+    }
   };
 
   return (
@@ -87,7 +153,7 @@ export default function ShowdownPage() {
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Showdown</h1>
         <p className="mt-2 text-gray-600">
-          Same input, every model&apos;s native format. Side by side.
+          Same input, every model&apos;s native format. Side by side. Click Run on any column to see the actual response.
         </p>
       </div>
 
@@ -104,7 +170,7 @@ export default function ShowdownPage() {
           onChange={(e) => setInput(e.target.value)}
           disabled={loading}
           rows={4}
-          placeholder="a guy walks into a dark hallway, sees a black cat, runs away. cinematic horror"
+          placeholder="explain how database transactions work to a 5 year old using a story"
           className="mt-2 block w-full rounded-md border border-gray-300 p-3 text-sm shadow-sm focus:border-violet-500 focus:ring-1 focus:ring-violet-500 disabled:bg-gray-50"
         />
 
@@ -136,7 +202,7 @@ export default function ShowdownPage() {
         <div className="mt-6 flex flex-wrap items-center gap-3">
           <button
             type="button"
-            onClick={run}
+            onClick={start}
             disabled={loading || !input.trim() || selected.size === 0}
             className="inline-flex items-center rounded-md bg-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 disabled:bg-violet-400"
           >
@@ -144,14 +210,24 @@ export default function ShowdownPage() {
             {loading ? 'Running…' : 'Run showdown'}
           </button>
           {result && (
-            <button
-              type="button"
-              onClick={share}
-              className="inline-flex items-center rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
-            >
-              <Share2 className="-ml-1 mr-2 h-4 w-4" />
-              {shareSlug ? 'Link copied!' : 'Share'}
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={share}
+                className="inline-flex items-center rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+              >
+                <Share2 className="-ml-1 mr-2 h-4 w-4" />
+                {shareSlug ? 'Link copied!' : 'Share link'}
+              </button>
+              <button
+                type="button"
+                onClick={tweet}
+                className="inline-flex items-center rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+              >
+                <Send className="-ml-1 mr-2 h-4 w-4" />
+                Tweet this
+              </button>
+            </>
           )}
         </div>
 
@@ -162,6 +238,8 @@ export default function ShowdownPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
           {result.outputs.map((out) => {
             const m = MODELS[out.target];
+            const runRes = runs[out.target];
+            const isRunning = running.has(out.target);
             return (
               <div
                 key={out.target}
@@ -192,9 +270,40 @@ export default function ShowdownPage() {
                 {out.error ? (
                   <p className="mt-3 text-xs text-red-600">{out.error}</p>
                 ) : (
-                  <pre className="mt-3 whitespace-pre-wrap rounded bg-gray-50 p-3 text-xs text-gray-900 overflow-auto max-h-96 flex-1">
-                    {out.optimized}
-                  </pre>
+                  <>
+                    <pre className="mt-3 whitespace-pre-wrap rounded bg-gray-50 p-3 text-xs text-gray-900 overflow-auto max-h-64">
+                      {out.optimized}
+                    </pre>
+                    <button
+                      type="button"
+                      onClick={() => run(out.target, out.optimized)}
+                      disabled={isRunning}
+                      className="mt-3 inline-flex items-center justify-center rounded-md border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-60"
+                    >
+                      {isRunning ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <Play className="-ml-0.5 mr-1.5 h-3.5 w-3.5" />
+                      )}
+                      {isRunning ? 'Running' : runRes ? 'Run again' : 'Run prompt'}
+                    </button>
+                    {runRes && (
+                      <div
+                        className={`mt-3 rounded p-3 text-xs ${
+                          runRes.callable
+                            ? 'bg-emerald-50 text-emerald-900'
+                            : 'bg-amber-50 text-amber-900'
+                        }`}
+                      >
+                        <p className="text-[10px] font-semibold uppercase tracking-wide">
+                          {runRes.callable ? `${m.label} response` : 'Note'}
+                        </p>
+                        <pre className="mt-1.5 whitespace-pre-wrap">
+                          {runRes.response}
+                        </pre>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             );
