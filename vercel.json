@@ -1,0 +1,7 @@
+{
+  "framework": "nextjs",
+  "regions": ["iad1"],
+  "buildCommand": "npx turbo run build --filter=@promptforge/web",
+  "installCommand": "npm install --no-audit --no-fund",
+  "outputDirectory": "apps/web/.next"
+}
