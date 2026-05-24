@@ -156,4 +156,39 @@ export default defineSchema({
   })
     .index("by_user", ["userId"])
     .index("by_target", ["target"]),
+
+  /**
+   * Versioned forge runs. Each forge or showdown is a "thread"; users can
+   * iterate, save edits, and revert. A thread keeps its head pointer in
+   * `currentVersionId`; versions form an append-only chain.
+   */
+  promptThreads: defineTable({
+    userId: v.id("users"),
+    title: v.string(),
+    target: v.string(),
+    modality: v.string(),
+    currentVersionId: v.optional(v.id("promptVersions")),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_userId", ["userId"])
+    .index("by_userId_updated", ["userId", "updatedAt"]),
+
+  promptVersions: defineTable({
+    threadId: v.id("promptThreads"),
+    /** Version 1 is the initial forge output; subsequent versions are user edits. */
+    versionNum: v.number(),
+    /** Source of the edit: "forge" (initial), "edit" (user typed), "ai" (re-forge). */
+    source: v.union(
+      v.literal("forge"),
+      v.literal("edit"),
+      v.literal("ai")
+    ),
+    content: v.string(),
+    /** Optional commit message: what changed and why. */
+    note: v.optional(v.string()),
+    createdAt: v.number(),
+  })
+    .index("by_thread", ["threadId"])
+    .index("by_thread_version", ["threadId", "versionNum"]),
 });

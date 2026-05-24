@@ -1,16 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { useAction } from 'convex/react';
+import { useRouter } from 'next/navigation';
+import { useAction, useMutation } from 'convex/react';
 import { api } from '@promptforge/convex/convex/_generated/api';
 import {
   MODELS,
-  ALL_MODEL_IDS,
   MODELS_BY_MODALITY,
   type ModelId,
   type Modality,
 } from '@promptforge/core';
-import { Copy, Check, Wand2 } from 'lucide-react';
+import { Copy, Check, Wand2, GitBranch } from 'lucide-react';
 
 const MODALITY_LABELS: Record<Modality, string> = {
   text: 'Text',
@@ -21,7 +21,9 @@ const MODALITY_LABELS: Record<Modality, string> = {
 };
 
 export default function ForgePage() {
+  const router = useRouter();
   const translate = useAction(api.promptforge.translate);
+  const createThread = useMutation(api.threads.createThread);
   const [input, setInput] = useState('');
   const [target, setTarget] = useState<ModelId | ''>('');
   const [loading, setLoading] = useState(false);
@@ -32,6 +34,7 @@ export default function ForgePage() {
     optimized: string;
   } | null>(null);
   const [copied, setCopied] = useState(false);
+  const [savingThread, setSavingThread] = useState(false);
 
   const handleSubmit = async () => {
     if (!input.trim() || input.trim().length < 3) {
@@ -59,6 +62,23 @@ export default function ForgePage() {
     await navigator.clipboard.writeText(result.optimized);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleSaveAsThread = async () => {
+    if (!result) return;
+    setSavingThread(true);
+    try {
+      const title = input.length > 60 ? input.slice(0, 57) + '…' : input;
+      const { threadId } = await createThread({
+        title: title || 'Untitled prompt',
+        target: result.target,
+        modality: result.intent.modality,
+        initialContent: result.optimized,
+      });
+      router.push(`/threads/${threadId}`);
+    } finally {
+      setSavingThread(false);
+    }
   };
 
   return (
@@ -154,21 +174,32 @@ export default function ForgePage() {
               Optimized prompt
             </h2>
             {result && (
-              <button
-                type="button"
-                onClick={handleCopy}
-                className="inline-flex items-center gap-1.5 rounded-md border border-gray-200 px-2.5 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50"
-              >
-                {copied ? (
-                  <>
-                    <Check className="h-3.5 w-3.5 text-green-600" /> Copied
-                  </>
-                ) : (
-                  <>
-                    <Copy className="h-3.5 w-3.5" /> Copy
-                  </>
-                )}
-              </button>
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={handleSaveAsThread}
+                  disabled={savingThread}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-gray-200 px-2.5 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-60"
+                >
+                  <GitBranch className="h-3.5 w-3.5" />
+                  {savingThread ? 'Saving…' : 'Save as thread'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCopy}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-gray-200 px-2.5 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="h-3.5 w-3.5 text-green-600" /> Copied
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-3.5 w-3.5" /> Copy
+                    </>
+                  )}
+                </button>
+              </div>
             )}
           </div>
 

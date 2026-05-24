@@ -16,6 +16,7 @@ import type * as prompts from "../prompts.js";
 import type * as seedLibrary from "../seedLibrary.js";
 import type * as shares from "../shares.js";
 import type * as templates from "../templates.js";
+import type * as threads from "../threads.js";
 import type * as usageLogs from "../usageLogs.js";
 import type * as users from "../users.js";
 import type * as workspaces from "../workspaces.js";
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   seedLibrary: typeof seedLibrary;
   shares: typeof shares;
   templates: typeof templates;
+  threads: typeof threads;
   usageLogs: typeof usageLogs;
   users: typeof users;
   workspaces: typeof workspaces;

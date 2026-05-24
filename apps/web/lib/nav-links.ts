@@ -6,6 +6,7 @@ import {
   Microscope,
   Library,
   Scale,
+  GitBranch,
   History,
   Copy,
   Settings,
@@ -43,6 +44,11 @@ export const navLinks = [
     href: '/library',
     label: 'Library',
     icon: Library,
+  },
+  {
+    href: '/threads',
+    label: 'Threads',
+    icon: GitBranch,
   },
   // ----- Original tools -----
   {

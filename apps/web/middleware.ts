@@ -5,6 +5,11 @@ const isPublicRoute = createRouteMatcher([
   "/pricing",
   "/sign-in(.*)",
   "/sign-up(.*)",
+  // Public share pages (with their own OG image route)
+  "/s/(.*)",
+  // Public embed (iframe-able for blogs/newsletters)
+  "/embed(.*)",
+  // Webhooks must remain public; the API auth happens inside the route
   "/api/webhooks(.*)",
 ]);
 
