@@ -102,4 +102,47 @@ export default defineSchema({
   })
     .index("by_userId", ["userId"])
     .index("by_userId_createdAt", ["userId", "createdAt"]),
+
+  // ----- PromptForge engine tables -----
+
+  forgeRuns: defineTable({
+    userId: v.id("users"),
+    input: v.string(),
+    target: v.string(),
+    modality: v.string(),
+    intentJson: v.string(),
+    optimized: v.string(),
+    tokensIn: v.number(),
+    tokensOut: v.number(),
+    createdAt: v.number(),
+  })
+    .index("by_userId", ["userId"])
+    .index("by_userId_createdAt", ["userId", "createdAt"])
+    .index("by_target", ["target"]),
+
+  forgeRatings: defineTable({
+    runId: v.id("forgeRuns"),
+    userId: v.id("users"),
+    rating: v.union(v.literal("up"), v.literal("down")),
+    comment: v.optional(v.string()),
+    createdAt: v.number(),
+  })
+    .index("by_run_user", ["runId", "userId"])
+    .index("by_run", ["runId"]),
+
+  forgeShares: defineTable({
+    /** Public shortcode used in /s/{slug} URLs. */
+    slug: v.string(),
+    /** Owning user (null for anonymous public shares). */
+    userId: v.optional(v.id("users")),
+    input: v.string(),
+    intentJson: v.string(),
+    /** JSON-encoded array of {target, optimized} objects. */
+    outputsJson: v.string(),
+    createdAt: v.number(),
+    /** View counter for popularity sorting. */
+    views: v.number(),
+  })
+    .index("by_slug", ["slug"])
+    .index("by_user", ["userId"]),
 });

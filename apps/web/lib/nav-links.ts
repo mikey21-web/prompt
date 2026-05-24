@@ -1,6 +1,10 @@
 import {
   BarChart3,
   Zap,
+  Wand2,
+  Swords,
+  Microscope,
+  Library,
   History,
   Copy,
   Settings,
@@ -13,9 +17,31 @@ export const navLinks = [
     label: 'Dashboard',
     icon: BarChart3,
   },
+  // ----- PromptForge engine -----
+  {
+    href: '/forge',
+    label: 'Forge',
+    icon: Wand2,
+  },
+  {
+    href: '/showdown',
+    label: 'Showdown',
+    icon: Swords,
+  },
+  {
+    href: '/reverse',
+    label: 'Reverse',
+    icon: Microscope,
+  },
+  {
+    href: '/library',
+    label: 'Library',
+    icon: Library,
+  },
+  // ----- Original tools -----
   {
     href: '/optimize',
-    label: 'Optimize',
+    label: 'Optimize (legacy)',
     icon: Zap,
   },
   {
@@ -25,7 +51,7 @@ export const navLinks = [
   },
   {
     href: '/templates',
-    label: 'Templates',
+    label: 'My templates',
     icon: Copy,
   },
   {
