@@ -17,9 +17,11 @@ import { findAdapter, type SiteAdapter } from "./sites";
 const FORGE_BTN_ID = "promptforge-btn";
 const FORGE_API =
   process.env.PLASMO_PUBLIC_API_URL ??
-  "https://web-5whel6dwa-udaya-kirans-projects-3bf705e5.vercel.app";
+  "https://tokavy-competetior.vercel.app";
 
 let observer: MutationObserver | null = null;
+let routeWatchId: number | null = null;
+let lastUrl = location.href;
 
 function ensureButton(adapter: SiteAdapter, input: HTMLElement) {
   if (document.getElementById(FORGE_BTN_ID)) return;
@@ -127,10 +129,10 @@ function tick() {
   const adapter = findAdapter();
   if (!adapter) return;
   const input = adapter.findInput();
+  // Only remove the button if input is gone AND we have one — but keep it
+  // around aggressively during SPA route changes
   if (input) {
     ensureButton(adapter, input);
-  } else {
-    document.getElementById(FORGE_BTN_ID)?.remove();
   }
 }
 
@@ -138,6 +140,17 @@ function start() {
   tick();
   observer = new MutationObserver(() => tick());
   observer.observe(document.documentElement, { childList: true, subtree: true });
+
+  // SPA route-change watcher — Claude/ChatGPT use pushState, MutationObserver alone misses some transitions
+  routeWatchId = window.setInterval(() => {
+    if (location.href !== lastUrl) {
+      lastUrl = location.href;
+      // Re-tick a few times after navigation to catch the new input
+      setTimeout(tick, 100);
+      setTimeout(tick, 500);
+      setTimeout(tick, 1500);
+    }
+  }, 300);
 }
 
 if (document.readyState === "loading") {
@@ -146,4 +159,7 @@ if (document.readyState === "loading") {
   start();
 }
 
-window.addEventListener("beforeunload", () => observer?.disconnect());
+window.addEventListener("beforeunload", () => {
+  observer?.disconnect();
+  if (routeWatchId !== null) clearInterval(routeWatchId);
+});

@@ -1,56 +1,48 @@
 "use client";
 
-import { useQuery, useAction } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "@promptforge/convex/convex/_generated/api";
-import {
-  PlanBadge,
-  ModeButton,
-  PromptDiff,
-  TokenSavings,
-} from "@promptforge/ui";
+import { TokenSavings } from "@promptforge/ui";
 import { QuotaCard } from "@/components/QuotaCard";
 import { RecentOptimizations } from "@/components/RecentOptimizations";
-import { useState } from "react";
-import type { Mode, TargetModel } from "@promptforge/core";
-import { ALL_MODES } from "@promptforge/core";
+import { OnboardingBanner } from "@/components/OnboardingBanner";
 import Link from "next/link";
-import { Zap } from "lucide-react";
+import { Zap, Swords, FlaskConical, GitBranch } from "lucide-react";
+
+const QUICK_ACTIONS = [
+  {
+    href: "/forge",
+    label: "Forge",
+    description: "Plain English → optimized prompt",
+    icon: Zap,
+    accent: "bg-violet-50 text-violet-700 border-violet-200",
+  },
+  {
+    href: "/showdown",
+    label: "Showdown",
+    description: "Compare 4 flagship models",
+    icon: Swords,
+    accent: "bg-blue-50 text-blue-700 border-blue-200",
+  },
+  {
+    href: "/eval",
+    label: "Eval",
+    description: "Raw vs optimized, same model",
+    icon: FlaskConical,
+    accent: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  },
+  {
+    href: "/threads",
+    label: "Threads",
+    description: "Versioned prompts with diff",
+    icon: GitBranch,
+    accent: "bg-amber-50 text-amber-700 border-amber-200",
+  },
+] as const;
 
 export default function DashboardPage() {
   const user = useQuery(api.users.getMe);
   const stats = useQuery(api.usageLogs.getStats, { days: 30 });
-  const optimize = useAction(api.optimize.optimizePrompt);
-
-  const [prompt, setPrompt] = useState("");
-  const [mode, setMode] = useState<Mode>("compress");
-  const [targetModel, setTargetModel] = useState<TargetModel>("gpt-4o-mini");
-  const [result, setResult] = useState<{
-    optimized: string;
-    tokensIn: number;
-    tokensOut: number;
-    savedTokens: number;
-  } | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function handleOptimize() {
-    if (!prompt.trim()) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await optimize({
-        prompt,
-        mode,
-        targetModel: targetModel.replace(/-/g, '') as never,
-        source: "web",
-      });
-      setResult(res);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Optimization failed");
-    } finally {
-      setLoading(false);
-    }
-  }
 
   if (user === undefined) {
     return (
@@ -68,40 +60,50 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
+      {/* First-run onboarding */}
+      <OnboardingBanner />
+
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
         <p className="mt-2 text-gray-600">
-          Welcome to PromptForge. Optimize your prompts and track usage.
+          Welcome back. Pick a tool below or jump straight into Forge.
         </p>
       </div>
 
-      {/* New Optimization Button */}
-      <Link
-        href="/optimize"
-        className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white hover:bg-indigo-700"
-      >
-        <Zap className="h-5 w-5" />
-        New Optimization
-      </Link>
+      {/* Quick actions */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {QUICK_ACTIONS.map((a) => (
+          <Link
+            key={a.href}
+            href={a.href}
+            className={`group rounded-2xl border bg-white p-4 hover:shadow-md transition flex flex-col gap-2 ${a.accent.replace(/bg-\S+/, "").replace(/text-\S+/, "")}`}
+          >
+            <div className={`inline-flex h-9 w-9 items-center justify-center rounded-lg ${a.accent}`}>
+              <a.icon className="h-4 w-4" />
+            </div>
+            <p className="font-semibold text-gray-900">{a.label}</p>
+            <p className="text-xs text-gray-500">{a.description}</p>
+          </Link>
+        ))}
+      </div>
 
-      {/* Main content grid */}
+      {/* Stats + recent */}
       <div className="grid gap-8 grid-cols-1 lg:grid-cols-3">
-        {/* Left column - quota and stats */}
-        <div className="lg:col-span-1 space-y-8">
+        <div className="lg:col-span-1 space-y-6">
           <QuotaCard />
 
           {stats && (
             <div className="space-y-4">
-              <div className="bg-white border border-gray-200 rounded-lg p-4 text-center shadow-sm">
+              <div className="bg-white border border-gray-200 rounded-2xl p-5 text-center shadow-sm">
                 <div className="text-3xl font-bold text-violet-600">
                   {stats.totalRequests}
                 </div>
                 <div className="text-sm text-gray-500 mt-1">
-                  Total optimizations (30d)
+                  Forges in the last 30 days
                 </div>
               </div>
-              <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+              <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
                 <TokenSavings
                   tokens={stats.totalSavedTokens}
                   estimatedCost={stats.estimatedSavedCost}
@@ -111,66 +113,7 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* Right column - optimizer and recent */}
-        <div className="lg:col-span-2 space-y-8">
-          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm space-y-4">
-            <h2 className="text-lg font-semibold text-gray-900">Quick Optimize</h2>
-
-            <div className="grid grid-cols-3 gap-2">
-              {ALL_MODES.map((m) => (
-                <ModeButton
-                  key={m}
-                  mode={m}
-                  onClick={() => setMode(m)}
-                  active={mode === m}
-                />
-              ))}
-            </div>
-
-            <select
-              value={targetModel}
-              onChange={(e) => setTargetModel(e.target.value as TargetModel)}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-300"
-            >
-              <option value="auto">Auto (general LLM)</option>
-              <option value="gpt4o">GPT-4o</option>
-              <option value="claude">Claude</option>
-              <option value="gemini">Gemini</option>
-              <option value="midjourney">Midjourney</option>
-            </select>
-
-            <textarea
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Paste your prompt here..."
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 h-32 resize-none focus:outline-none focus:ring-2 focus:ring-violet-300"
-            />
-
-            {error && (
-              <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
-                {error}
-              </p>
-            )}
-
-            <button
-              onClick={handleOptimize}
-              disabled={loading || !prompt.trim()}
-              className="w-full bg-violet-600 text-white py-2.5 rounded-lg font-semibold text-sm hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {loading ? "Optimizing..." : "Optimize →"}
-            </button>
-
-            {result && (
-              <PromptDiff
-                original={prompt}
-                optimized={result.optimized}
-                tokensIn={result.tokensIn}
-                tokensOut={result.tokensOut}
-                savedTokens={result.savedTokens}
-              />
-            )}
-          </div>
-
+        <div className="lg:col-span-2">
           <RecentOptimizations />
         </div>
       </div>
