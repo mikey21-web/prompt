@@ -3,6 +3,8 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 const isPublicRoute = createRouteMatcher([
   "/",
   "/pricing",
+  "/benchmark",
+  "/showcase",
   "/sign-in(.*)",
   "/sign-up(.*)",
   // Public share pages (with their own OG image route)
