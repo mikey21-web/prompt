@@ -6,6 +6,8 @@ const isPublicRoute = createRouteMatcher([
   "/benchmark",
   "/showcase",
   "/install",
+  "/privacy",
+  "/terms",
   "/sign-in(.*)",
   "/sign-up(.*)",
   // Public share pages (with their own OG image route)
