@@ -29,22 +29,20 @@ export default function Popup() {
     setLoading(true);
 
     try {
-      const response = await fetch(
-        "https://api.promptforge.ai/v1/optimize",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-          },
-          body: JSON.stringify({ prompt: input, mode }),
-        }
-      );
+      const apiUrl = "https://tokavy-competetior.vercel.app/api/forge";
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ input, mode }),
+      });
 
       if (!response.ok) throw new Error("Optimization failed");
 
       const data = await response.json();
-      setOutput(data.optimized);
+      setOutput(data.optimized ?? data.text ?? "");
 
       // Update usage
       const newUsage = {
@@ -88,17 +86,17 @@ export default function Popup() {
           <div className="flex gap-2">
             <ModeButton
               mode="compress"
-              isActive={mode === "compress"}
+              active={mode === "compress"}
               onClick={() => setMode("compress")}
             />
             <ModeButton
               mode="enhance"
-              isActive={mode === "enhance"}
+              active={mode === "enhance"}
               onClick={() => setMode("enhance")}
             />
             <ModeButton
               mode="rewrite"
-              isActive={mode === "rewrite"}
+              active={mode === "rewrite"}
               onClick={() => setMode("rewrite")}
             />
           </div>
@@ -124,7 +122,13 @@ export default function Popup() {
 
         {output && (
           <div className="border-t border-gray-200 pt-4 space-y-3">
-            <PromptDiff original={input} optimized={output} />
+            <PromptDiff
+              original={input}
+              optimized={output}
+              tokensIn={Math.ceil(input.length / 4)}
+              tokensOut={Math.ceil(output.length / 4)}
+              savedTokens={Math.max(0, Math.ceil((input.length - output.length) / 4))}
+            />
 
             <div className="flex gap-2">
               <button

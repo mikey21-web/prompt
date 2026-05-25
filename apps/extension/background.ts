@@ -78,7 +78,8 @@ function createContextMenu() {
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if (!tab?.id) return;
 
-  const mode = info.menuItemId?.replace("promptforge-", "") as "compress" | "enhance" | "rewrite";
+  const itemId = String(info.menuItemId);
+  const mode = itemId.replace("promptforge-", "") as "compress" | "enhance" | "rewrite";
   if (!mode) return;
 
   // Send to popup with selected text
