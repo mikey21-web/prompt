@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { UsageBar, ModeButton, PromptDiff } from "@promptforge/ui";
+import "./style.css";
 
 export default function Popup() {
   const [mode, setMode] = useState<"compress" | "enhance" | "rewrite">(
@@ -74,7 +75,7 @@ export default function Popup() {
   };
 
   return (
-    <div className="w-96 bg-white text-gray-900">
+    <div style={{ width: 384 }} className="bg-white text-gray-900">
       <div className="border-b border-gray-200 p-4">
         <h1 className="text-lg font-bold">PromptForge</h1>
         <UsageBar used={usage.used} limit={usage.limit} />

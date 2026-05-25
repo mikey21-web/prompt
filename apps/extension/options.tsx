@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "./style.css";
 
 interface Settings {
   apiKey: string;
