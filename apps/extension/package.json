@@ -14,6 +14,22 @@
     "dev": "plasmo dev",
     "lint": "eslint src"
   },
+  "manifest": {
+    "permissions": [
+      "storage",
+      "tabs",
+      "activeTab",
+      "contextMenus",
+      "scripting"
+    ],
+    "host_permissions": [
+      "https://tokavy-competetior.vercel.app/*",
+      "https://chatgpt.com/*",
+      "https://chat.openai.com/*",
+      "https://claude.ai/*",
+      "https://gemini.google.com/*"
+    ]
+  },
   "dependencies": {
     "@promptforge/core": "*",
     "@promptforge/ui": "*",
