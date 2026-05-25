@@ -30,7 +30,7 @@ export function ModelMarquee() {
           <span
             key={`${m}-${i}`}
             aria-hidden={i >= MODELS.length}
-            className="shrink-0 rounded-full border border-[oklch(88%_0.005_270)] bg-white px-4 py-1.5 text-xs font-medium text-[oklch(35%_0.008_270)]"
+            className="shrink-0 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium text-white/60"
           >
             {m}
           </span>

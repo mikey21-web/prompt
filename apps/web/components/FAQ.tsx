@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Plus, Minus } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const FAQS = [
   {
@@ -31,48 +32,68 @@ const FAQS = [
 ];
 
 export function FAQ() {
-  const [open, setOpen] = useState<number | null>(0);
+  const [open, setOpen] = useState<number | null>(null);
 
   return (
-    <section className="py-24 bg-gradient-to-b from-white to-violet-50/30">
+    <section className="py-24">
       <div className="max-w-3xl mx-auto px-6">
-        <div className="text-center mb-12">
-          <p className="text-xs font-semibold uppercase tracking-wider text-violet-600 mb-3">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+          className="mb-12"
+        >
+          <p className="text-xs font-semibold uppercase tracking-widest text-white/40 mb-4">
             FAQ
           </p>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tighter text-white">
             Questions, answered.
           </h2>
-        </div>
+        </motion.div>
 
-        <div className="space-y-3">
+        <div className="divide-y divide-white/8 border-t border-white/8">
           {FAQS.map((f, i) => {
             const isOpen = open === i;
             return (
-              <div
+              <motion.div
                 key={i}
-                className="rounded-2xl border border-gray-200 bg-white overflow-hidden hover:border-violet-200 transition-colors"
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.5, delay: i * 0.06, ease: [0.23, 1, 0.32, 1] }}
               >
                 <button
                   onClick={() => setOpen(isOpen ? null : i)}
-                  className="flex items-center justify-between w-full text-left px-5 py-4"
+                  className={`flex items-center justify-between w-full text-left px-0 py-5 transition-colors duration-150 ${isOpen ? 'text-white' : 'text-white/70 hover:text-white'}`}
                   aria-expanded={isOpen}
                 >
-                  <span className="font-semibold text-gray-900 pr-4">{f.q}</span>
+                  <span className="font-semibold pr-8 text-base">{f.q}</span>
                   <span
-                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${
-                      isOpen ? 'bg-violet-600 text-white' : 'bg-violet-50 text-violet-600'
-                    } transition-colors`}
+                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border transition-colors duration-150 ${
+                      isOpen
+                        ? 'border-[#7c3aed] bg-[#7c3aed] text-white'
+                        : 'border-white/10 bg-white/5 text-white/40'
+                    }`}
                   >
                     {isOpen ? <Minus className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
                   </span>
                 </button>
-                {isOpen && (
-                  <div className="px-5 pb-5 -mt-1">
-                    <p className="text-gray-600 leading-relaxed text-sm">{f.a}</p>
-                  </div>
-                )}
-              </div>
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      key="answer"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
+                      className="overflow-hidden"
+                    >
+                      <p className="pb-5 text-white/60 leading-relaxed text-sm">{f.a}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             );
           })}
         </div>

@@ -64,27 +64,27 @@ export function HeroDemo() {
   const current = OUTPUTS[active];
 
   return (
-    <div className="rounded-2xl border border-[oklch(88%_0.005_270)] bg-white overflow-hidden shadow-[0_20px_60px_-20px_oklch(12%_0.008_270_/_0.08)]">
+    <div className="rounded-2xl border border-white/8 bg-[#111113] overflow-hidden shadow-[0_20px_60px_-20px_rgba(0,0,0,0.6)]">
       {/* Input */}
-      <div className="border-b border-[oklch(90%_0.005_270)] px-5 py-4">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-[oklch(60%_0.005_270)] mb-2">
+      <div className="border-b border-white/8 bg-[#0d0d0f] px-5 py-4">
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-white/40 mb-2">
           Input
         </p>
-        <p className="text-sm font-medium text-[oklch(12%_0.008_270)] leading-relaxed">
+        <p className="text-sm font-medium text-white/90 leading-relaxed">
           &ldquo;{INPUT}&rdquo;
         </p>
       </div>
 
       {/* Model tabs */}
-      <div className="flex border-b border-[oklch(90%_0.005_270)] bg-[oklch(98%_0.003_270)]">
+      <div className="flex border-b border-white/8 bg-[#0d0d0f]">
         {OUTPUTS.map((o, i) => (
           <button
             key={o.model}
             onClick={() => setActive(i)}
             className={`relative flex-1 px-2 py-3 text-[11px] font-medium transition-colors duration-150 ${
               i === active
-                ? 'text-[oklch(12%_0.008_270)]'
-                : 'text-[oklch(55%_0.006_270)] hover:text-[oklch(30%_0.008_270)]'
+                ? 'text-white/90'
+                : 'text-white/40 hover:text-white/60'
             }`}
           >
             <span className="hidden sm:inline">{o.model}</span>
@@ -92,7 +92,7 @@ export function HeroDemo() {
             {i === active && (
               <motion.span
                 layoutId="tab-indicator"
-                className="absolute inset-x-2 -bottom-px h-0.5 bg-[oklch(52%_0.22_290)] rounded-full"
+                className="absolute inset-x-2 -bottom-px h-0.5 bg-[#7c3aed] rounded-full"
                 transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
               />
             )}
@@ -100,13 +100,13 @@ export function HeroDemo() {
         ))}
       </div>
 
-      {/* Output — Emil: scale(0.98) + opacity on enter, not scale(0) */}
-      <div className="bg-[oklch(13%_0.008_270)] p-5 min-h-[200px]">
+      {/* Output */}
+      <div className="bg-[#080809] p-5 min-h-[200px]">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-[10px] font-semibold uppercase tracking-widest text-[oklch(52%_0.22_290)]">
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-[#7c3aed]">
             {current.format}
           </span>
-          <span className="text-[10px] text-[oklch(45%_0.006_270)] font-mono">
+          <span className="text-[10px] text-white/40 font-mono">
             auto-detected
           </span>
         </div>
@@ -117,7 +117,7 @@ export function HeroDemo() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
-            className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[oklch(88%_0.005_270)]"
+            className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-white/90"
           >
             {current.body}
           </motion.pre>

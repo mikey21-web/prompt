@@ -45,13 +45,13 @@ const FOOTER_LINKS = [
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-gray-100 bg-white">
+    <footer className="border-t border-white/8 bg-[#0a0a0b]">
       <div className="max-w-6xl mx-auto px-6 py-16">
         <div className="grid grid-cols-2 md:grid-cols-6 gap-8 mb-12">
           {/* Brand block */}
           <div className="col-span-2">
             <Logo size="md" />
-            <p className="mt-3 text-sm text-gray-500 leading-relaxed max-w-xs">
+            <p className="mt-3 text-sm text-white/40 leading-relaxed max-w-xs">
               One prompt in. Every model&apos;s native format out. The translation
               layer for serious AI users.
             </p>
@@ -60,7 +60,7 @@ export function SiteFooter() {
                 href="https://x.com/promptforge"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-600 hover:border-violet-300 hover:text-violet-700 transition"
+                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-white/40 hover:border-white/20 hover:text-white/70 transition"
                 aria-label="X / Twitter"
               >
                 <Twitter className="h-4 w-4" />
@@ -69,7 +69,7 @@ export function SiteFooter() {
                 href="https://github.com/mikey21-web/prompt"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-600 hover:border-violet-300 hover:text-violet-700 transition"
+                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-white/40 hover:border-white/20 hover:text-white/70 transition"
                 aria-label="GitHub"
               >
                 <Github className="h-4 w-4" />
@@ -80,7 +80,7 @@ export function SiteFooter() {
           {/* Link columns */}
           {FOOTER_LINKS.map((col) => (
             <div key={col.title}>
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-900 mb-3">
+              <h4 className="text-xs font-semibold uppercase tracking-widest text-white mb-3">
                 {col.title}
               </h4>
               <ul className="space-y-2">
@@ -88,7 +88,7 @@ export function SiteFooter() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-gray-500 hover:text-violet-700 transition-colors"
+                      className="text-sm text-white/40 hover:text-white/70 transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -99,11 +99,11 @@ export function SiteFooter() {
           ))}
         </div>
 
-        <div className="border-t border-gray-100 pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-gray-400">
+        <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
+          <p className="text-xs text-white/30">
             © 2026 PromptForge. All rights reserved.
           </p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-white/30">
             Built for makers, by makers. ⚡
           </p>
         </div>

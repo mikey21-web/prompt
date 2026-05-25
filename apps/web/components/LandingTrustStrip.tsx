@@ -56,23 +56,25 @@ export function LandingTrustStrip() {
   if (stats.length === 0) return null;
 
   return (
-    <div className="border-y border-gray-100 bg-gray-50/50">
+    <div className="border-y border-white/8">
       <div className="max-w-5xl mx-auto px-6 py-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           {stats.map((stat) => {
             const inner = (
               <>
-                <p className="text-2xl md:text-3xl font-bold text-gray-900">
+                <p className="text-2xl md:text-3xl font-bold tracking-tighter text-white">
                   {stat.value}
                 </p>
-                <p className="text-xs text-gray-500 mt-1">{stat.label}</p>
+                <p className="text-xs font-semibold uppercase tracking-widest text-white/40 mt-1">
+                  {stat.label}
+                </p>
               </>
             );
             return stat.href ? (
               <Link
                 key={stat.label}
                 href={stat.href}
-                className="hover:text-violet-700 transition-colors"
+                className="hover:text-[#7c3aed] transition-colors"
               >
                 {inner}
               </Link>
