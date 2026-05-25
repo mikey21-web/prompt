@@ -2,13 +2,95 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Geist font (Emil/Taste skill: ban Inter) ─────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ── Custom easing curves (Emil Kowalski skill) ───────────────────────── */
+:root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* Tinted neutrals — never pure black/white (Impeccable) */
+  --bg: oklch(99% 0.003 270);
+  --fg: oklch(12% 0.008 270);
+  --muted: oklch(55% 0.006 270);
+  --border: oklch(90% 0.005 270);
+  --accent: oklch(52% 0.22 290);   /* violet, not neon */
+}
+
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 * {
   box-sizing: border-box;
+}
+
+/* ── Button press feedback (Emil: scale 0.97 on active) ──────────────── */
+.btn-press {
+  transition: transform 160ms var(--ease-out);
+}
+.btn-press:active {
+  transform: scale(0.97);
+}
+
+/* ── Marquee animation ────────────────────────────────────────────────── */
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 40s linear infinite;
+}
+
+/* ── Stagger fade-in (Emil: 30-80ms between items) ───────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up {
+  animation: fade-up 0.5s var(--ease-out) backwards;
+}
+
+/* ── Spotlight border card (Taste skill) ─────────────────────────────── */
+.spotlight-card {
+  position: relative;
+  overflow: hidden;
+}
+.spotlight-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    oklch(52% 0.22 290 / 0.06),
+    transparent 40%
+  );
+  opacity: 0;
+  transition: opacity 300ms var(--ease-out);
+  pointer-events: none;
+  z-index: 0;
+}
+.spotlight-card:hover::before {
+  opacity: 1;
+}
+
+/* ── Reduced motion (Emil: accessibility) ────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .fade-up {
+    animation: none;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

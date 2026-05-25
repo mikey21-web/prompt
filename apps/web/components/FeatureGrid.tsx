@@ -1,91 +1,100 @@
+'use client';
+
+import { motion } from 'framer-motion';
 import { Hammer, Swords, Scale, Telescope, GitBranch, BookText } from 'lucide-react';
 
 const FEATURES = [
   {
     icon: Hammer,
     name: 'Forge',
-    desc: "Plain English → optimized prompt in any model's native format. One click, done.",
-    accent: 'from-violet-500 to-fuchsia-500',
-    bg: 'bg-violet-50',
-    iconColor: 'text-violet-600',
+    desc: "Plain English in. Optimized prompt out, in any model's native format. One click.",
+    tag: 'Core',
   },
   {
     icon: Swords,
     name: 'Showdown',
-    desc: 'Same input, four flagship models, side by side. Pick the winner with confidence.',
-    accent: 'from-blue-500 to-indigo-500',
-    bg: 'bg-blue-50',
-    iconColor: 'text-blue-600',
+    desc: 'Same input, four flagship models, side by side. Pick the winner with data.',
+    tag: 'Compare',
   },
   {
     icon: Scale,
     name: 'Eval',
     desc: 'Run raw vs optimized against the same model. Measure if we actually helped.',
-    accent: 'from-emerald-500 to-teal-500',
-    bg: 'bg-emerald-50',
-    iconColor: 'text-emerald-600',
+    tag: 'Measure',
   },
   {
     icon: Telescope,
     name: 'Reverse',
     desc: "Paste any prompt, get back a plain English explanation of what it does.",
-    accent: 'from-amber-500 to-orange-500',
-    bg: 'bg-amber-50',
-    iconColor: 'text-amber-600',
+    tag: 'Understand',
   },
   {
     icon: GitBranch,
     name: 'Threads',
     desc: 'Versioned prompts. Iterate, diff, revert. Your prompt history with structure.',
-    accent: 'from-pink-500 to-rose-500',
-    bg: 'bg-pink-50',
-    iconColor: 'text-pink-600',
+    tag: 'History',
   },
   {
     icon: BookText,
     name: 'Style guides',
     desc: "Your personal rules baked into every forge. 'Always bullet points.' 'No passive voice.'",
-    accent: 'from-cyan-500 to-blue-500',
-    bg: 'bg-cyan-50',
-    iconColor: 'text-cyan-600',
+    tag: 'Personalize',
   },
 ];
 
+// Emil: stagger 50ms, ease-out-expo
+const item = {
+  hidden: { opacity: 0, y: 8 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.23, 1, 0.32, 1] } },
+};
+
 export function FeatureGrid() {
   return (
-    <section className="py-24">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="text-center mb-14 max-w-2xl mx-auto">
-          <p className="text-xs font-semibold uppercase tracking-wider text-violet-600 mb-3">
+    <section className="max-w-7xl mx-auto px-6 py-24">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+        {/* Left: heading — Impeccable: no restated headings */}
+        <div className="lg:sticky lg:top-24">
+          <p className="text-xs font-semibold uppercase tracking-widest text-[oklch(52%_0.22_290)] mb-4">
             One engine, many tools
           </p>
-          <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
-            Built for people who use AI seriously
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tighter leading-tight mb-5">
+            Built for people who use AI seriously.
           </h2>
-          <p className="text-lg text-gray-500">
+          <p className="text-lg text-[oklch(45%_0.006_270)] leading-relaxed max-w-[45ch]">
             Not a fancier ChatGPT wrapper. A prompt translation engine, with the surrounding tools you actually need.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {FEATURES.map((f, i) => (
-            <div
+
+        {/* Right: feature list — Taste: no 3-col equal cards, use divide-y */}
+        <motion.div
+          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06 } } }}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: '-80px' }}
+          className="divide-y divide-[oklch(90%_0.005_270)]"
+        >
+          {FEATURES.map((f) => (
+            <motion.div
               key={f.name}
-              className="group relative rounded-2xl border border-gray-200 bg-white p-6 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-900/5 transition-all duration-200"
-              style={{ animationDelay: `${i * 60}ms` }}
+              variants={item}
+              className="group flex items-start gap-5 py-6 first:pt-0 last:pb-0"
             >
-              <div
-                className={`inline-flex h-11 w-11 items-center justify-center rounded-xl ${f.bg} ${f.iconColor} mb-4 group-hover:scale-110 transition-transform`}
-              >
-                <f.icon className="h-5 w-5" />
+              {/* Icon — no colored bg tile (Impeccable: no icon-tile-above-heading) */}
+              <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[oklch(88%_0.005_270)] bg-white text-[oklch(45%_0.006_270)] group-hover:border-[oklch(52%_0.22_290)] group-hover:text-[oklch(52%_0.22_290)] transition-colors duration-200">
+                <f.icon className="h-4 w-4" strokeWidth={1.5} />
               </div>
-              <h3 className="font-bold text-lg text-gray-900 mb-2">{f.name}</h3>
-              <p className="text-sm text-gray-500 leading-relaxed">{f.desc}</p>
-              <div
-                className={`absolute inset-x-0 bottom-0 h-px bg-gradient-to-r ${f.accent} opacity-0 group-hover:opacity-100 transition-opacity`}
-              />
-            </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="font-semibold text-[oklch(12%_0.008_270)]">{f.name}</h3>
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-[oklch(60%_0.005_270)] border border-[oklch(88%_0.005_270)] rounded px-1.5 py-0.5">
+                    {f.tag}
+                  </span>
+                </div>
+                <p className="text-sm text-[oklch(45%_0.006_270)] leading-relaxed">{f.desc}</p>
+              </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

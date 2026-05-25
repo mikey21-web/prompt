@@ -8,34 +8,31 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        // Taste skill: ban Inter, use Geist
+        sans: ["Geist", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
+        mono: ["Geist Mono", "JetBrains Mono", "monospace"],
+      },
       colors: {
-        brand: {
-          50: "#f5f3ff",
-          100: "#ede9fe",
-          500: "#8b5cf6",
-          600: "#7c3aed",
-          700: "#6d28d9",
+        // Impeccable: tinted neutrals, never pure black/white
+        zinc: {
+          950: "#0a0a0f",
         },
       },
-      fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
+      transitionTimingFunction: {
+        // Emil Kowalski custom easing curves
+        "out-expo": "cubic-bezier(0.23, 1, 0.32, 1)",
+        "in-out-expo": "cubic-bezier(0.77, 0, 0.175, 1)",
+        "drawer": "cubic-bezier(0.32, 0.72, 0, 1)",
       },
       keyframes: {
         marquee: {
           "0%": { transform: "translateX(0)" },
           "100%": { transform: "translateX(-50%)" },
         },
-        "fade-in": {
-          "0%": { opacity: "0", transform: "translateY(4px)" },
+        "fade-up": {
+          "0%": { opacity: "0", transform: "translateY(10px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
-        },
-        "fade-in-up": {
-          "0%": { opacity: "0", transform: "translateY(12px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
-        },
-        "gradient-shift": {
-          "0%, 100%": { backgroundPosition: "0% 50%" },
-          "50%": { backgroundPosition: "100% 50%" },
         },
         "blob": {
           "0%, 100%": { transform: "translate(0, 0) scale(1)" },
@@ -44,10 +41,8 @@ const config: Config = {
         },
       },
       animation: {
-        marquee: "marquee 35s linear infinite",
-        "fade-in": "fade-in 0.4s ease-out",
-        "fade-in-up": "fade-in-up 0.6s ease-out backwards",
-        "gradient-shift": "gradient-shift 8s ease-in-out infinite",
+        marquee: "marquee 40s linear infinite",
+        "fade-up": "fade-up 0.5s cubic-bezier(0.23, 1, 0.32, 1) backwards",
         "blob": "blob 18s ease-in-out infinite",
       },
     },

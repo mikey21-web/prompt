@@ -28,6 +28,8 @@
     "@vercel/og": "^0.11.1",
     "@vercel/speed-insights": "^2.0.0",
     "convex": "^1.14.0",
+    "framer-motion": "^12.40.0",
+    "geist": "^1.7.1",
     "lucide-react": "^0.460.0",
     "next": "14.2.5",
     "react": "^18.3.1",
