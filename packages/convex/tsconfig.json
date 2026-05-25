@@ -7,11 +7,12 @@
     "isolatedModules": true,
     "skipLibCheck": true,
     "strict": true,
+    "noEmit": true,
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true
   },
   "include": ["convex/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "convex/_generated"]
 }

@@ -193,7 +193,7 @@ export const optimizeViaApi = action({
       apiKey,
     });
     if (!user) throw new Error("Invalid API key");
-    if (user.plan === "free") throw new Error("API access requires Pro plan");
+    // API access free for everyone
 
     // Increment usage (no auth identity available — pass clerkId directly)
     await ctx.runMutation(internal.users.checkAndIncrementUsage, {

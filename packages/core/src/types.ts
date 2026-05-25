@@ -36,9 +36,9 @@ export interface OptimizeResult {
 }
 
 export const PLAN_LIMITS: Record<Plan, { requestsPerDay: number }> = {
-  free: { requestsPerDay: 50 },
-  pro: { requestsPerDay: 500 },
-  team: { requestsPerDay: 500 },
+  free: { requestsPerDay: 10000 },
+  pro: { requestsPerDay: 10000 },
+  team: { requestsPerDay: 10000 },
 };
 
 export const ALL_MODES: Mode[] = [

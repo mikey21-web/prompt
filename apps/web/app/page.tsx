@@ -141,7 +141,7 @@ export default function LandingPage() {
           </Link>
         </div>
         <p className="mt-4 text-xs text-gray-400">
-          50 free forges per day · No credit card · Works on Chrome, VS Code, Discord
+          Free forever · No credit card · Works on Chrome, VS Code, Discord
         </p>
       </section>
 
@@ -305,7 +305,7 @@ export default function LandingPage() {
         <SignedOut>
           <SignInButton mode="modal">
             <button className="bg-violet-600 text-white px-8 py-4 rounded-xl text-base font-semibold hover:bg-violet-700 shadow-lg shadow-violet-600/20">
-              Start free — 50 forges per day
+              Start free — forever
             </button>
           </SignInButton>
         </SignedOut>

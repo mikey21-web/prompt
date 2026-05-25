@@ -63,17 +63,7 @@ export const createTemplate = mutation({
 
     if (!user) throw new Error("User not found");
 
-    if (!args.isPublic && user.plan === "free") {
-      const existing = await ctx.db
-        .query("templates")
-        .withIndex("by_authorId", (q) => q.eq("authorId", user._id))
-        .collect();
-      if (existing.filter((t) => !t.isPublic).length >= 5) {
-        throw new Error(
-          "Free plan limited to 5 private templates. Upgrade to Pro."
-        );
-      }
-    }
+    // All features free for everyone — no plan-gated limits
 
     return await ctx.db.insert("templates", {
       ...args,
