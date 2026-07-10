@@ -42,7 +42,6 @@ const FEATURES = [
   },
 ];
 
-// Emil: stagger 50ms, ease-out-expo
 const item = {
   hidden: { opacity: 0, y: 8 },
   show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.23, 1, 0.32, 1] } },
@@ -52,26 +51,24 @@ export function FeatureGrid() {
   return (
     <section className="max-w-7xl mx-auto px-6 py-24">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-        {/* Left: heading — Impeccable: no restated headings */}
         <div className="lg:sticky lg:top-24">
-          <p className="text-xs font-semibold uppercase tracking-widest text-[oklch(52%_0.22_290)] mb-4">
+          <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--accent)' }}>
             One engine, many tools
           </p>
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tighter leading-tight mb-5">
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tighter leading-tight mb-5" style={{ color: 'var(--text-primary)' }}>
             Built for people who use AI seriously.
           </h2>
-          <p className="text-lg text-[oklch(45%_0.006_270)] leading-relaxed max-w-[45ch]">
+          <p className="text-lg leading-relaxed max-w-[45ch]" style={{ color: 'var(--text-secondary)' }}>
             Not a fancier ChatGPT wrapper. A prompt translation engine, with the surrounding tools you actually need.
           </p>
         </div>
 
-        {/* Right: feature list — Taste: no 3-col equal cards, use divide-y */}
         <motion.div
           variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06 } } }}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: '-80px' }}
-          className="divide-y divide-[oklch(90%_0.005_270)]"
+          className="divide-y" style={{ borderColor: 'var(--border)' }}
         >
           {FEATURES.map((f) => (
             <motion.div
@@ -79,18 +76,30 @@ export function FeatureGrid() {
               variants={item}
               className="group flex items-start gap-5 py-6 first:pt-0 last:pb-0"
             >
-              {/* Icon — no colored bg tile (Impeccable: no icon-tile-above-heading) */}
-              <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[oklch(88%_0.005_270)] bg-white text-[oklch(45%_0.006_270)] group-hover:border-[oklch(52%_0.22_290)] group-hover:text-[oklch(52%_0.22_290)] transition-colors duration-200">
+              <div
+                className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors duration-200"
+                style={{
+                  borderColor: 'var(--border)',
+                  backgroundColor: 'var(--surface)',
+                  color: 'var(--text-secondary)',
+                }}
+              >
                 <f.icon className="h-4 w-4" strokeWidth={1.5} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-semibold text-[oklch(12%_0.008_270)]">{f.name}</h3>
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-[oklch(60%_0.005_270)] border border-[oklch(88%_0.005_270)] rounded px-1.5 py-0.5">
+                  <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>{f.name}</h3>
+                  <span
+                    className="text-[10px] font-semibold uppercase tracking-wider rounded px-1.5 py-0.5"
+                    style={{
+                      color: 'var(--text-muted)',
+                      border: '1px solid var(--border)',
+                    }}
+                  >
                     {f.tag}
                   </span>
                 </div>
-                <p className="text-sm text-[oklch(45%_0.006_270)] leading-relaxed">{f.desc}</p>
+                <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{f.desc}</p>
               </div>
             </motion.div>
           ))}

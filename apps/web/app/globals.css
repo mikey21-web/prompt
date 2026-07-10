@@ -6,24 +6,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&display=swap');
 
 :root {
-  --bg: #ffffff;
-  --surface: #f7f7f8;
-  --surface-hover: #eeeef0;
-  --surface-raised: #ffffff;
-  --border: rgba(0, 0, 0, 0.08);
-  --border-hover: rgba(0, 0, 0, 0.16);
-  --text-primary: #16161a;
-  --text-secondary: #55555f;
-  --text-muted: #8b8b96;
-  --accent: #7c3aed;
-  --accent-dim: rgba(124, 58, 237, 0.08);
-  --accent-border: rgba(124, 58, 237, 0.25);
-  --green: #16a34a;
-  --green-dim: rgba(22, 163, 74, 0.08);
-  --amber: #d97706;
-  --amber-dim: rgba(217, 119, 6, 0.08);
-  --red: #dc2626;
-  --red-dim: rgba(220, 38, 38, 0.08);
+  --bg: #0b0b0e;
+  --surface: #131316;
+  --surface-hover: #1a1a1f;
+  --surface-raised: #1d1d23;
+  --border: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(255, 255, 255, 0.12);
+  --text-primary: #efeff1;
+  --text-secondary: #9b9ba3;
+  --text-muted: #5c5c66;
+  --accent: #a78bfa;
+  --accent-dim: rgba(167, 139, 250, 0.1);
+  --accent-border: rgba(167, 139, 250, 0.25);
+  --green: #4ade80;
+  --green-dim: rgba(74, 222, 128, 0.1);
+  --amber: #fbbf24;
+  --amber-dim: rgba(251, 191, 36, 0.1);
+  --red: #f87171;
+  --red-dim: rgba(248, 113, 113, 0.1);
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
