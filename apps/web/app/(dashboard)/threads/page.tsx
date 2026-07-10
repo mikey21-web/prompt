@@ -12,7 +12,7 @@ export default function ThreadsPage() {
     return (
       <div className="animate-pulse space-y-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="h-16 rounded-lg bg-gray-200" />
+          <div key={i} className="h-16 rounded-lg" style={{ backgroundColor: 'var(--border)' }} />
         ))}
       </div>
     );
@@ -21,16 +21,16 @@ export default function ThreadsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Threads</h1>
-        <p className="mt-2 text-gray-600">
+        <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Threads</h1>
+        <p className="mt-2" style={{ color: 'var(--text-secondary)' }}>
           Versioned prompts. Iterate, diff, revert.
         </p>
       </div>
 
       {threads.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-gray-300 p-12 text-center">
-          <GitBranch className="mx-auto h-8 w-8 text-gray-400" />
-          <p className="mt-3 text-sm text-gray-600">
+        <div className="rounded-lg border border-dashed p-12 text-center" style={{ borderColor: 'var(--text-muted)' }}>
+          <GitBranch className="mx-auto h-8 w-8" style={{ color: 'var(--text-muted)' }} />
+          <p className="mt-3 text-sm" style={{ color: 'var(--text-secondary)' }}>
             No threads yet. Forge a prompt and click &ldquo;Save as thread&rdquo; to start one.
           </p>
         </div>
@@ -40,18 +40,19 @@ export default function ThreadsPage() {
             <Link
               key={t._id}
               href={`/threads/${t._id}`}
-              className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-4 hover:border-violet-300 hover:shadow-sm"
+              className="flex items-center justify-between rounded-lg border p-4 hover:border-violet-300 hover:shadow-sm"
+              style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface-raised)' }}
             >
               <div className="min-w-0 flex-1">
-                <h3 className="font-medium text-gray-900 truncate">{t.title}</h3>
-                <p className="mt-1 text-xs text-gray-500">
-                  <span className="rounded bg-gray-100 px-1.5 py-0.5 font-mono">
+                <h3 className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>{t.title}</h3>
+                <p className="mt-1 text-xs" style={{ color: 'var(--text-muted)' }}>
+                  <span className="rounded px-1.5 py-0.5 font-mono" style={{ backgroundColor: 'var(--surface)' }}>
                     {t.target}
                   </span>{' '}
                   · {t.modality}
                 </p>
               </div>
-              <div className="ml-4 flex items-center gap-1 text-xs text-gray-500 flex-shrink-0">
+              <div className="ml-4 flex items-center gap-1 text-xs flex-shrink-0" style={{ color: 'var(--text-muted)' }}>
                 <Clock className="h-3.5 w-3.5" />
                 {new Date(t.updatedAt).toLocaleDateString()}
               </div>

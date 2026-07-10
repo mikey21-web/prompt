@@ -30,7 +30,8 @@ export function ModelMarquee() {
           <span
             key={`${m}-${i}`}
             aria-hidden={i >= MODELS.length}
-            className="shrink-0 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium text-white/60"
+            className="shrink-0 rounded-full border px-4 py-1.5 text-xs font-medium"
+            style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)', color: 'var(--text-secondary)' }}
           >
             {m}
           </span>

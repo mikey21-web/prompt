@@ -52,18 +52,22 @@ export class ErrorBoundary extends Component<Props, State> {
     return (
       <div
         role="alert"
-        className="rounded-lg border border-red-200 bg-red-50 p-6"
+        className="rounded-lg p-6"
+        style={{ border: '1px solid rgba(220,38,38,0.2)', backgroundColor: 'rgba(220,38,38,0.08)' }}
       >
-        <h2 className="text-lg font-semibold text-red-800">
+        <h2 className="text-lg font-semibold" style={{ color: 'var(--red)' }}>
           Something went wrong
         </h2>
-        <p className="mt-2 text-sm text-red-700">
+        <p className="mt-2 text-sm" style={{ color: 'var(--red)' }}>
           {this.state.error?.message ?? 'An unexpected error occurred.'}
         </p>
         <button
           type="button"
           onClick={this.handleReset}
-          className="mt-4 rounded bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+          className="mt-4 rounded px-4 py-2 text-sm font-medium"
+          style={{ backgroundColor: 'var(--red)', color: 'white' }}
+          onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#b91c1c'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--red)'; }}
         >
           Try again
         </button>

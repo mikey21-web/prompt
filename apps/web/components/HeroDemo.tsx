@@ -64,35 +64,46 @@ export function HeroDemo() {
   const current = OUTPUTS[active];
 
   return (
-    <div className="rounded-2xl border border-white/8 bg-[#111113] overflow-hidden shadow-[0_20px_60px_-20px_rgba(0,0,0,0.6)]">
+    <div
+      className="rounded-2xl border overflow-hidden shadow-[0_20px_60px_-20px_rgba(0,0,0,0.15)]"
+      style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
+    >
       {/* Input */}
-      <div className="border-b border-white/8 bg-[#0d0d0f] px-5 py-4">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-white/40 mb-2">
+      <div
+        className="border-b px-5 py-4"
+        style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)' }}
+      >
+        <p className="text-[10px] font-semibold uppercase tracking-widest mb-2" style={{ color: 'var(--text-muted)' }}>
           Input
         </p>
-        <p className="text-sm font-medium text-white/90 leading-relaxed">
+        <p className="text-sm font-medium leading-relaxed" style={{ color: 'var(--text-primary)' }}>
           &ldquo;{INPUT}&rdquo;
         </p>
       </div>
 
       {/* Model tabs */}
-      <div className="flex border-b border-white/8 bg-[#0d0d0f]">
+      <div
+        className="flex border-b"
+        style={{ borderColor: 'var(--border)', backgroundColor: 'var(--bg)' }}
+      >
         {OUTPUTS.map((o, i) => (
           <button
             key={o.model}
             onClick={() => setActive(i)}
             className={`relative flex-1 px-2 py-3 text-[11px] font-medium transition-colors duration-150 ${
-              i === active
-                ? 'text-white/90'
-                : 'text-white/40 hover:text-white/60'
+              i === active ? '' : 'hover:text-[var(--text-secondary)]'
             }`}
+            style={{
+              color: i === active ? 'var(--text-primary)' : 'var(--text-muted)',
+            }}
           >
             <span className="hidden sm:inline">{o.model}</span>
             <span className="sm:hidden">{o.format}</span>
             {i === active && (
               <motion.span
                 layoutId="tab-indicator"
-                className="absolute inset-x-2 -bottom-px h-0.5 bg-[#7c3aed] rounded-full"
+                className="absolute inset-x-2 -bottom-px h-0.5 rounded-full"
+                style={{ backgroundColor: 'var(--accent)' }}
                 transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
               />
             )}
@@ -101,12 +112,12 @@ export function HeroDemo() {
       </div>
 
       {/* Output */}
-      <div className="bg-[#080809] p-5 min-h-[200px]">
+      <div className="p-5 min-h-[200px]" style={{ backgroundColor: 'var(--bg)' }}>
         <div className="flex items-center justify-between mb-3">
-          <span className="text-[10px] font-semibold uppercase tracking-widest text-[#7c3aed]">
+          <span className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: 'var(--accent)' }}>
             {current.format}
           </span>
-          <span className="text-[10px] text-white/40 font-mono">
+          <span className="text-[10px] font-mono" style={{ color: 'var(--text-muted)' }}>
             auto-detected
           </span>
         </div>
@@ -117,7 +128,8 @@ export function HeroDemo() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
-            className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-white/90"
+            className="whitespace-pre-wrap font-mono text-xs leading-relaxed"
+            style={{ color: 'var(--text-primary)' }}
           >
             {current.body}
           </motion.pre>

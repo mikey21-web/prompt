@@ -7,8 +7,8 @@ import { ArrowRight } from 'lucide-react';
 
 const MODE_COLORS: Record<string, { bg: string; text: string }> = {
   auto: { bg: 'var(--accent-dim)', text: 'var(--accent)' },
-  compress: { bg: 'var(--green-dim)', text: 'var(--green)' },
-  enhance: { bg: 'rgba(251,191,36,0.1)', text: 'var(--amber)' },
+  compress: { bg: 'rgba(22,163,74,0.08)', text: 'var(--green)' },
+  enhance: { bg: 'rgba(217,119,6,0.08)', text: 'var(--amber)' },
 };
 
 export function RecentOptimizations() {

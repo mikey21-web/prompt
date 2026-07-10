@@ -2,26 +2,16 @@
 
 import Link from 'next/link';
 import { SignInButton, SignedIn, SignedOut } from '@clerk/nextjs';
-import { ArrowRight, ArrowUpRight } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useRef, useState } from 'react';
+import { ArrowRight, ArrowUpRight, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useState } from 'react';
 import { Logo } from '@/components/Logo';
 import { HeroDemo } from '@/components/HeroDemo';
 import { FAQ } from '@/components/FAQ';
 import { SiteFooter } from '@/components/SiteFooter';
 import { LandingTrustStrip } from '@/components/LandingTrustStrip';
 
-// ── Animation helpers ──────────────────────────────────────────────────────
 const EASE = [0.23, 1, 0.32, 1] as const;
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 12 },
-  show: (delay = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: EASE, delay },
-  }),
-};
 
 const stagger = {
   container: {
@@ -34,70 +24,21 @@ const stagger = {
   },
 };
 
-// ── Ticker items ───────────────────────────────────────────────────────────
-const TICKER_ITEMS =
-  'FORGE ✓ SHOWDOWN ✓ EVAL ✓ REVERSE ✓ THREADS ✓ STYLE GUIDES ✓ CHROME EXTENSION ✓ VS CODE ✓ DISCORD BOT ✓ FREE FOREVER ✓';
-
-// ── Features list ──────────────────────────────────────────────────────────
 const FEATURES = [
-  {
-    num: '01',
-    name: 'Forge',
-    desc: 'Plain English → optimized prompt in any model\'s native format.',
-    tag: 'Core',
-  },
-  {
-    num: '02',
-    name: 'Showdown',
-    desc: 'Same input, four flagship models, side by side.',
-    tag: 'Compare',
-  },
-  {
-    num: '03',
-    name: 'Eval',
-    desc: 'Raw vs optimized, same model. Measure if we actually helped.',
-    tag: 'Measure',
-  },
-  {
-    num: '04',
-    name: 'Reverse',
-    desc: 'Paste any prompt, get back plain English.',
-    tag: 'Decode',
-  },
-  {
-    num: '05',
-    name: 'Threads',
-    desc: 'Versioned prompts. Iterate, diff, revert.',
-    tag: 'History',
-  },
-  {
-    num: '06',
-    name: 'Style guides',
-    desc: 'Your rules baked into every forge.',
-    tag: 'Customize',
-  },
+  { num: '01', name: 'Forge', desc: 'Plain English → optimized prompt in any model\'s native format.', tag: 'Core' },
+  { num: '02', name: 'Showdown', desc: 'Same input, four flagship models, side by side.', tag: 'Compare' },
+  { num: '03', name: 'Eval', desc: 'Raw vs optimized, same model. Measure if we actually helped.', tag: 'Measure' },
+  { num: '04', name: 'Reverse', desc: 'Paste any prompt, get back plain English.', tag: 'Decode' },
+  { num: '05', name: 'Threads', desc: 'Versioned prompts. Iterate, diff, revert.', tag: 'History' },
+  { num: '06', name: 'Style guides', desc: 'Your rules baked into every forge.', tag: 'Customize' },
 ];
 
-// ── Steps ──────────────────────────────────────────────────────────────────
 const STEPS = [
-  {
-    num: '01',
-    title: 'Type plain English',
-    desc: 'Describe what you want in natural language. No prompt engineering required.',
-  },
-  {
-    num: '02',
-    title: 'Pick your model',
-    desc: 'Choose Claude, GPT-4o, Gemini, Midjourney, Sora, or let us auto-detect.',
-  },
-  {
-    num: '03',
-    title: 'Get the native format',
-    desc: 'Receive the optimized prompt in that model\'s exact expected format.',
-  },
+  { num: '01', title: 'Type plain English', desc: 'Describe what you want in natural language. No prompt engineering required.' },
+  { num: '02', title: 'Pick your model', desc: 'Choose Claude, GPT-4o, Gemini, Midjourney, or let us auto-detect.' },
+  { num: '03', title: 'Get the native format', desc: 'Receive the optimized prompt in that model\'s exact expected format.' },
 ];
 
-// ── Surfaces ───────────────────────────────────────────────────────────────
 const SURFACES = [
   { name: 'Web app', sub: 'promptforge.dev' },
   { name: 'Chrome extension', sub: 'ChatGPT, Claude, Gemini' },
@@ -110,47 +51,30 @@ export default function LandingPage() {
   const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
 
   return (
-    <main className="min-h-[100dvh] bg-[#0a0a0b] text-[#fafafa]">
+    <main style={{ backgroundColor: 'var(--bg)', color: 'var(--text-primary)' }}>
 
-      {/* ── A. Top ticker marquee ─────────────────────────────────────── */}
-      <div className="border-b border-white/8 bg-[#0a0a0b] overflow-hidden py-2.5">
-        <div
-          className="flex whitespace-nowrap animate-marquee"
-          style={{ width: 'max-content' }}
-        >
-          {[TICKER_ITEMS, TICKER_ITEMS].map((t, idx) => (
-            <span
-              key={idx}
-              aria-hidden={idx > 0}
-              className="text-[11px] font-semibold uppercase tracking-widest text-white/50 px-8"
-            >
-              {t}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* ── B. Sticky nav ────────────────────────────────────────────── */}
-      <nav className="sticky top-0 z-40 border-b border-white/8 bg-[#0a0a0b]/90 backdrop-blur-md">
+      {/* ── Nav ──────────────────────────────────────────────── */}
+      <nav className="sticky top-0 z-40 border-b" style={{ backgroundColor: 'var(--bg)', borderColor: 'var(--border)' }}>
         <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
           <Logo size="md" />
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white/40">
-            <Link href="/showcase" className="hover:text-white transition-colors duration-150">Showcase</Link>
-            <Link href="/benchmark" className="hover:text-white transition-colors duration-150">Benchmark</Link>
-            <Link href="/install" className="hover:text-white transition-colors duration-150">Install</Link>
-            <Link href="/pricing" className="hover:text-white transition-colors duration-150">Pricing</Link>
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium" style={{ color: 'var(--text-muted)' }}>
+            <Link href="/showcase" className="hover:text-[var(--text-primary)] transition-colors">Showcase</Link>
+            <Link href="/benchmark" className="hover:text-[var(--text-primary)] transition-colors">Benchmark</Link>
+            <Link href="/install" className="hover:text-[var(--text-primary)] transition-colors">Install</Link>
+            <Link href="/pricing" className="hover:text-[var(--text-primary)] transition-colors">Pricing</Link>
           </div>
           <div className="flex items-center gap-2">
             <SignedOut>
               <SignInButton mode="modal" forceRedirectUrl="/dashboard">
-                <button className="text-sm font-medium text-white/40 hover:text-white transition-colors hidden sm:inline px-3 py-1.5">
+                <button className="text-sm font-medium px-3 py-1.5 transition-colors" style={{ color: 'var(--text-muted)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}>
                   Sign in
                 </button>
               </SignInButton>
               <SignInButton mode="modal" forceRedirectUrl="/dashboard">
                 <motion.button
                   whileTap={{ scale: 0.97 }}
-                  className="inline-flex items-center gap-1.5 bg-white text-[#0a0a0b] px-4 py-2 rounded-lg text-sm font-semibold hover:bg-white/90 transition-colors duration-150"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+                  style={{ backgroundColor: 'var(--text-primary)', color: '#fff' }}
                 >
                   Get started
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -161,7 +85,8 @@ export default function LandingPage() {
               <Link href="/dashboard">
                 <motion.span
                   whileTap={{ scale: 0.97 }}
-                  className="inline-flex items-center gap-1.5 bg-white text-[#0a0a0b] px-4 py-2 rounded-lg text-sm font-semibold hover:bg-white/90 transition-colors duration-150 cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold cursor-pointer"
+                  style={{ backgroundColor: 'var(--text-primary)', color: '#fff' }}
                 >
                   Dashboard
                 </motion.span>
@@ -171,45 +96,27 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* ── C. Hero section ──────────────────────────────────────────── */}
+      {/* ── Hero ──────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-6 pt-24 pb-20 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-        {/* Left: copy */}
-        <motion.div
-          variants={stagger.container}
-          initial="hidden"
-          animate="show"
-          className="max-w-xl"
-        >
-          {/* Eyebrow */}
-          <motion.div variants={stagger.item} className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-white/40 mb-8">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-[#7c3aed] opacity-75 animate-ping" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#7c3aed]" />
-            </span>
+        <motion.div variants={stagger.container} initial="hidden" animate="show" className="max-w-xl">
+          <motion.div variants={stagger.item} className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest mb-8" style={{ color: 'var(--accent)' }}>
+            <Sparkles className="h-3 w-3" />
             Prompt engineering, solved.
           </motion.div>
-
-          {/* Headline */}
-          <motion.h1
-            variants={stagger.item}
-            className="text-6xl md:text-8xl font-bold tracking-tighter leading-none mb-8 whitespace-pre-line"
-          >
-            {`THE PROMPT\nTRANSLATION\nENGINE.`}
+          <motion.h1 variants={stagger.item} className="text-6xl md:text-7xl font-bold tracking-tighter leading-none mb-8 whitespace-pre-line">
+            THE PROMPT<br />TRANSLATION<br />ENGINE.
           </motion.h1>
-
-          {/* Subhead */}
-          <motion.p variants={stagger.item} className="text-lg text-white/60 leading-relaxed max-w-[55ch] mb-10">
+          <motion.p variants={stagger.item} className="text-lg leading-relaxed max-w-[55ch] mb-10" style={{ color: 'var(--text-secondary)' }}>
             Claude wants XML. GPT wants markdown. Midjourney wants tokens.
             One sentence in, every model&apos;s native format out.
           </motion.p>
-
-          {/* CTAs */}
           <motion.div variants={stagger.item} className="flex items-center gap-3 flex-wrap mb-6">
             <SignedOut>
               <SignInButton mode="modal" forceRedirectUrl="/dashboard">
                 <motion.button
                   whileTap={{ scale: 0.97 }}
-                  className="inline-flex items-center gap-2 bg-white text-[#0a0a0b] px-6 py-3 rounded-xl text-sm font-semibold hover:bg-white/90 transition-colors duration-150"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-colors"
+                  style={{ backgroundColor: 'var(--text-primary)', color: '#fff' }}
                 >
                   Start forging
                   <ArrowRight className="h-4 w-4" />
@@ -218,7 +125,10 @@ export default function LandingPage() {
               <Link href="/forge">
                 <motion.span
                   whileTap={{ scale: 0.97 }}
-                  className="inline-flex items-center gap-2 text-white/60 px-5 py-3 rounded-xl text-sm font-medium border border-white/10 hover:border-white/20 hover:text-white/80 transition-all duration-150 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium border cursor-pointer transition-all"
+                  style={{ color: 'var(--text-secondary)', borderColor: 'var(--border)' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--border-hover)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
                 >
                   See it work
                   <ArrowUpRight className="h-4 w-4" />
@@ -229,7 +139,8 @@ export default function LandingPage() {
               <Link href="/forge">
                 <motion.span
                   whileTap={{ scale: 0.97 }}
-                  className="inline-flex items-center gap-2 bg-white text-[#0a0a0b] px-6 py-3 rounded-xl text-sm font-semibold hover:bg-white/90 transition-colors duration-150 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold cursor-pointer"
+                  style={{ backgroundColor: 'var(--text-primary)', color: '#fff' }}
                 >
                   Open Forge
                   <ArrowRight className="h-4 w-4" />
@@ -237,13 +148,10 @@ export default function LandingPage() {
               </Link>
             </SignedIn>
           </motion.div>
-
-          <motion.p variants={stagger.item} className="text-xs text-white/30">
+          <motion.p variants={stagger.item} className="text-xs" style={{ color: 'var(--text-muted)' }}>
             Free forever. No credit card. Works in Chrome, VS Code, Discord.
           </motion.p>
         </motion.div>
-
-        {/* Right: live demo */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -253,10 +161,10 @@ export default function LandingPage() {
         </motion.div>
       </section>
 
-      {/* ── D. Stats bar ─────────────────────────────────────────────── */}
-      <div className="border-y border-white/8">
+      {/* ── Stats ──────────────────────────────────────────────── */}
+      <div className="border-y" style={{ borderColor: 'var(--border)' }}>
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/8">
+          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x" style={{ borderColor: 'var(--border)' }}>
             {[
               { value: '10,000 / day', label: 'Free forges per user' },
               { value: '4 models', label: 'Side by side in Showdown' },
@@ -270,10 +178,10 @@ export default function LandingPage() {
                 transition={{ duration: 0.5, delay: i * 0.06, ease: EASE }}
                 className="px-8 py-8 text-center md:text-left"
               >
-                <p className="text-3xl md:text-4xl font-bold tracking-tighter text-white mb-1">
+                <p className="text-3xl md:text-4xl font-bold tracking-tighter mb-1" style={{ color: 'var(--text-primary)' }}>
                   {stat.value}
                 </p>
-                <p className="text-xs font-semibold uppercase tracking-widest text-white/40">
+                <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
                   {stat.label}
                 </p>
               </motion.div>
@@ -282,7 +190,7 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* ── E. Live demo section ─────────────────────────────────────── */}
+      {/* ── Live demo ──────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-6 py-24">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -291,10 +199,10 @@ export default function LandingPage() {
           transition={{ duration: 0.5, ease: EASE }}
           className="mb-12"
         >
-          <p className="text-xs font-semibold uppercase tracking-widest text-white/40 mb-4">
+          <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: 'var(--text-muted)' }}>
             01 — See it work
           </p>
-          <div className="h-px bg-white/8 w-full" />
+          <div className="h-px w-full" style={{ backgroundColor: 'var(--border)' }} />
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -307,7 +215,7 @@ export default function LandingPage() {
         </motion.div>
       </section>
 
-      {/* ── F. Features section ──────────────────────────────────────── */}
+      {/* ── Features ────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-6 py-24">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -316,13 +224,13 @@ export default function LandingPage() {
           transition={{ duration: 0.5, ease: EASE }}
           className="mb-12"
         >
-          <p className="text-xs font-semibold uppercase tracking-widest text-white/40 mb-4">
+          <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: 'var(--text-muted)' }}>
             02 — What it does
           </p>
-          <div className="h-px bg-white/8 w-full" />
+          <div className="h-px w-full" style={{ backgroundColor: 'var(--border)' }} />
         </motion.div>
 
-        <div className="divide-y divide-white/8 border-b border-white/8">
+        <div className="divide-y" style={{ borderColor: 'var(--border)' }}>
           {FEATURES.map((f, i) => (
             <motion.div
               key={f.num}
@@ -332,21 +240,20 @@ export default function LandingPage() {
               transition={{ duration: 0.5, delay: i * 0.06, ease: EASE }}
               onMouseEnter={() => setHoveredFeature(i)}
               onMouseLeave={() => setHoveredFeature(null)}
-              className={`grid grid-cols-12 gap-4 items-center py-6 px-4 -mx-4 rounded-lg transition-colors duration-150 ${
-                hoveredFeature === i ? 'bg-white/5' : ''
-              }`}
+              className="grid grid-cols-12 gap-4 items-center py-6 px-4 -mx-4 rounded-lg transition-colors duration-150"
+              style={{ backgroundColor: hoveredFeature === i ? 'var(--surface)' : 'transparent' }}
             >
-              <span className="col-span-1 text-xs font-semibold uppercase tracking-widest text-white/30">
+              <span className="col-span-1 text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
                 {f.num}
               </span>
-              <span className="col-span-3 md:col-span-2 text-base font-semibold text-white">
+              <span className="col-span-3 md:col-span-2 text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
                 {f.name}
               </span>
-              <span className="col-span-8 md:col-span-7 text-sm text-white/60 leading-relaxed">
+              <span className="col-span-8 md:col-span-7 text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 {f.desc}
               </span>
               <span className="hidden md:block col-span-2 text-right">
-                <span className="text-[10px] font-semibold uppercase tracking-widest text-white/20 border border-white/10 rounded-full px-2.5 py-1">
+                <span className="text-[10px] font-semibold uppercase tracking-widest px-2.5 py-1 rounded-full border" style={{ color: 'var(--text-muted)', borderColor: 'var(--border)' }}>
                   {f.tag}
                 </span>
               </span>
@@ -355,7 +262,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── G. How it works ──────────────────────────────────────────── */}
+      {/* ── How it works ────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-6 py-24">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -364,13 +271,13 @@ export default function LandingPage() {
           transition={{ duration: 0.5, ease: EASE }}
           className="mb-16"
         >
-          <p className="text-xs font-semibold uppercase tracking-widest text-white/40 mb-4">
+          <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: 'var(--text-muted)' }}>
             03 — Three steps
           </p>
-          <div className="h-px bg-white/8 w-full" />
+          <div className="h-px w-full" style={{ backgroundColor: 'var(--border)' }} />
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-0 divide-y md:divide-y-0 md:divide-x divide-white/8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-0 divide-y md:divide-y-0 md:divide-x" style={{ borderColor: 'var(--border)' }}>
           {STEPS.map((step, i) => (
             <motion.div
               key={step.num}
@@ -380,13 +287,13 @@ export default function LandingPage() {
               transition={{ duration: 0.5, delay: i * 0.06, ease: EASE }}
               className="px-0 md:px-10 py-10 first:pl-0 last:pr-0"
             >
-              <p className="text-6xl font-bold tracking-tighter text-white/10 mb-6 leading-none">
+              <p className="text-6xl font-bold tracking-tighter mb-6 leading-none" style={{ color: 'var(--border)' }}>
                 {step.num}
               </p>
-              <h3 className="text-xl font-bold tracking-tight text-white mb-3">
+              <h3 className="text-xl font-bold tracking-tight mb-3" style={{ color: 'var(--text-primary)' }}>
                 {step.title}
               </h3>
-              <p className="text-sm text-white/60 leading-relaxed">
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 {step.desc}
               </p>
             </motion.div>
@@ -394,7 +301,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── H. Where it works ────────────────────────────────────────── */}
+      {/* ── Surfaces ────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-6 py-24">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -403,13 +310,13 @@ export default function LandingPage() {
           transition={{ duration: 0.5, ease: EASE }}
           className="mb-12"
         >
-          <p className="text-xs font-semibold uppercase tracking-widest text-white/40 mb-4">
+          <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: 'var(--text-muted)' }}>
             04 — Five surfaces
           </p>
-          <div className="h-px bg-white/8 w-full" />
+          <div className="h-px w-full" style={{ backgroundColor: 'var(--border)' }} />
         </motion.div>
 
-        <div className="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-white/8 border-y border-white/8">
+        <div className="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x border-y" style={{ borderColor: 'var(--border)' }}>
           {SURFACES.map((s, i) => (
             <motion.div
               key={s.name}
@@ -417,25 +324,28 @@ export default function LandingPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-60px' }}
               transition={{ duration: 0.5, delay: i * 0.06, ease: EASE }}
-              className="flex-1 px-6 py-8 group hover:bg-white/5 transition-colors duration-150"
+              className="flex-1 px-6 py-8 group transition-colors duration-150"
+              style={{ backgroundColor: 'transparent' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--surface)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
             >
-              <p className="text-base font-semibold text-white mb-1 group-hover:text-white/70 transition-colors">
+              <p className="text-base font-semibold mb-1 transition-colors" style={{ color: 'var(--text-primary)' }}>
                 {s.name}
               </p>
-              <p className="text-xs text-white/40">{s.sub}</p>
+              <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{s.sub}</p>
             </motion.div>
           ))}
         </div>
       </section>
 
-      {/* ── I. LandingTrustStrip ─────────────────────────────────────── */}
+      {/* ── Trust strip ─────────────────────────────────────────── */}
       <LandingTrustStrip />
 
-      {/* ── J. FAQ ───────────────────────────────────────────────────── */}
+      {/* ── FAQ ─────────────────────────────────────────────────── */}
       <FAQ />
 
-      {/* ── K. Final CTA ─────────────────────────────────────────────── */}
-      <section className="border-t border-white/8">
+      {/* ── Final CTA ───────────────────────────────────────────── */}
+      <section className="border-t" style={{ borderColor: 'var(--border)' }}>
         <div className="max-w-7xl mx-auto px-6 py-32 text-center">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -443,15 +353,15 @@ export default function LandingPage() {
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.7, ease: EASE }}
           >
-            <p className="text-xs font-semibold uppercase tracking-widest text-white/40 mb-8">
+            <p className="text-xs font-semibold uppercase tracking-widest mb-8" style={{ color: 'var(--text-muted)' }}>
               Get started
             </p>
-            <h2 className="text-5xl md:text-7xl font-bold tracking-tighter leading-none text-white mb-8">
+            <h2 className="text-5xl md:text-7xl font-bold tracking-tighter leading-none mb-8" style={{ color: 'var(--text-primary)' }}>
               Stop fighting
               <br />
               with prompts.
             </h2>
-            <p className="text-lg text-white/60 leading-relaxed max-w-[45ch] mx-auto mb-12">
+            <p className="text-lg leading-relaxed max-w-[45ch] mx-auto mb-12" style={{ color: 'var(--text-secondary)' }}>
               One sentence in PromptForge becomes the right prompt for every model. Free, forever.
             </p>
             <div className="flex items-center justify-center gap-4 flex-wrap">
@@ -459,7 +369,8 @@ export default function LandingPage() {
                 <SignInButton mode="modal" forceRedirectUrl="/dashboard">
                   <motion.button
                     whileTap={{ scale: 0.97 }}
-                    className="inline-flex items-center gap-2 bg-white text-[#0a0a0b] px-8 py-4 rounded-xl text-base font-semibold hover:bg-white/90 transition-colors duration-150"
+                    className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base font-semibold transition-colors"
+                    style={{ backgroundColor: 'var(--text-primary)', color: '#fff' }}
                   >
                     Start forging free
                     <ArrowUpRight className="h-4 w-4" />
@@ -470,7 +381,8 @@ export default function LandingPage() {
                 <Link href="/forge">
                   <motion.span
                     whileTap={{ scale: 0.97 }}
-                    className="inline-flex items-center gap-2 bg-white text-[#0a0a0b] px-8 py-4 rounded-xl text-base font-semibold hover:bg-white/90 transition-colors duration-150 cursor-pointer"
+                    className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base font-semibold cursor-pointer"
+                    style={{ backgroundColor: 'var(--text-primary)', color: '#fff' }}
                   >
                     Open Forge
                     <ArrowUpRight className="h-4 w-4" />
@@ -478,14 +390,14 @@ export default function LandingPage() {
                 </Link>
               </SignedIn>
             </div>
-            <p className="mt-6 text-xs text-white/30">
+            <p className="mt-6 text-xs" style={{ color: 'var(--text-muted)' }}>
               No credit card. No usage caps that matter.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* ── L. SiteFooter ────────────────────────────────────────────── */}
+      {/* ── Footer ──────────────────────────────────────────────── */}
       <SiteFooter />
     </main>
   );

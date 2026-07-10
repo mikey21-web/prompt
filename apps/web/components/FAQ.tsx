@@ -44,15 +44,15 @@ export function FAQ() {
           transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
           className="mb-12"
         >
-          <p className="text-xs font-semibold uppercase tracking-widest text-white/40 mb-4">
+          <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: 'var(--text-muted)' }}>
             FAQ
           </p>
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tighter text-white">
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tighter" style={{ color: 'var(--text-primary)' }}>
             Questions, answered.
           </h2>
         </motion.div>
 
-        <div className="divide-y divide-white/8 border-t border-white/8">
+        <div className="divide-y border-t" style={{ borderColor: 'var(--border)' }}>
           {FAQS.map((f, i) => {
             const isOpen = open === i;
             return (
@@ -65,16 +65,20 @@ export function FAQ() {
               >
                 <button
                   onClick={() => setOpen(isOpen ? null : i)}
-                  className={`flex items-center justify-between w-full text-left px-0 py-5 transition-colors duration-150 ${isOpen ? 'text-white' : 'text-white/70 hover:text-white'}`}
+                  className={`flex items-center justify-between w-full text-left px-0 py-5 transition-colors duration-150 ${
+                    isOpen ? '' : 'hover:text-[var(--text-primary)]'
+                  }`}
+                  style={{ color: isOpen ? 'var(--text-primary)' : 'var(--text-secondary)' }}
                   aria-expanded={isOpen}
                 >
                   <span className="font-semibold pr-8 text-base">{f.q}</span>
                   <span
-                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border transition-colors duration-150 ${
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border transition-colors duration-150"
+                    style={
                       isOpen
-                        ? 'border-[#7c3aed] bg-[#7c3aed] text-white'
-                        : 'border-white/10 bg-white/5 text-white/40'
-                    }`}
+                        ? { borderColor: 'var(--accent)', backgroundColor: 'var(--accent)', color: '#ffffff' }
+                        : { borderColor: 'var(--border)', backgroundColor: 'var(--surface)', color: 'var(--text-muted)' }
+                    }
                   >
                     {isOpen ? <Minus className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
                   </span>
@@ -89,7 +93,7 @@ export function FAQ() {
                       transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
                       className="overflow-hidden"
                     >
-                      <p className="pb-5 text-white/60 leading-relaxed text-sm">{f.a}</p>
+                      <p className="pb-5 leading-relaxed text-sm" style={{ color: 'var(--text-secondary)' }}>{f.a}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>

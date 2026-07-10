@@ -31,7 +31,7 @@ export function OptimizeForm({ onSubmit, loading }: OptimizeFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="prompt-input" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="prompt-input" className="block text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
           Your Prompt
         </label>
         <textarea
@@ -39,9 +39,18 @@ export function OptimizeForm({ onSubmit, loading }: OptimizeFormProps) {
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           placeholder="Enter the prompt you want to optimize..."
-          className="mt-1 block w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="mt-1 block w-full rounded border px-3 py-2 shadow-sm focus:outline-none focus:ring-1"
+          style={{ borderColor: 'var(--border)' }}
           rows={6}
           disabled={loading}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = 'var(--accent)';
+            e.currentTarget.style.boxShadow = '0 0 0 1px var(--accent)';
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = 'var(--border)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
         />
       </div>
 
@@ -64,17 +73,26 @@ export function OptimizeForm({ onSubmit, loading }: OptimizeFormProps) {
       </div>
 
       <div>
-        <label htmlFor="model-select" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="model-select" className="block text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
           Target Model
         </label>
         <select
           id="model-select"
           value={targetModel}
           onChange={handleModelChange}
-          className="mt-1 block w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="mt-1 block w-full rounded border px-3 py-2 shadow-sm focus:outline-none focus:ring-1"
+          style={{ borderColor: 'var(--border)' }}
           disabled={loading}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = 'var(--accent)';
+            e.currentTarget.style.boxShadow = '0 0 0 1px var(--accent)';
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = 'var(--border)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
         >
-          <option value="gpt-4o-mini">GPT-4o Mini (Fast & Cheap)</option>
+          <option value="gpt-4o-mini">GPT-4o Mini (Fast &amp; Cheap)</option>
           <option value="gpt-4o">GPT-4o (More Capable)</option>
         </select>
       </div>
@@ -83,7 +101,14 @@ export function OptimizeForm({ onSubmit, loading }: OptimizeFormProps) {
         type="submit"
         disabled={loading || !prompt.trim()}
         aria-label="Optimize prompt with selected mode"
-        className="w-full rounded bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 disabled:bg-gray-300"
+        className="w-full rounded px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        style={{ backgroundColor: 'var(--accent)', color: '#ffffff' }}
+        onMouseEnter={(e) => {
+          if (!loading && prompt.trim()) e.currentTarget.style.backgroundColor = 'var(--accent-hover)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = 'var(--accent)';
+        }}
       >
         {loading ? 'Optimizing...' : 'Optimize'}
       </button>

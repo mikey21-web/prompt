@@ -116,8 +116,8 @@ export default function BillingPage() {
   if (user === undefined) {
     return (
       <div className="animate-pulse">
-        <div className="h-8 w-48 bg-gray-200 rounded mb-4"></div>
-        <div className="h-4 w-64 bg-gray-200 rounded"></div>
+        <div className="h-8 w-48 rounded mb-4" style={{ backgroundColor: 'var(--border)' }}></div>
+        <div className="h-4 w-64 rounded" style={{ backgroundColor: 'var(--border)' }}></div>
       </div>
     );
   }
@@ -128,8 +128,8 @@ export default function BillingPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Subscription Plans</h1>
-        <p className="mt-2 text-gray-600">
+        <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Subscription Plans</h1>
+        <p className="mt-2" style={{ color: 'var(--text-secondary)' }}>
           Manage your subscription and upgrade your plan
         </p>
       </div>
@@ -187,42 +187,42 @@ export default function BillingPage() {
       </div>
 
       {/* FAQ Section */}
-      <div className="border-t border-gray-200 pt-8">
-        <h2 className="text-lg font-semibold text-gray-900 mb-6">
+      <div className="border-t pt-8" style={{ borderColor: 'var(--border)' }}>
+        <h2 className="text-lg font-semibold mb-6" style={{ color: 'var(--text-primary)' }}>
           Frequently Asked Questions
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">
+            <h3 className="font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
               Can I change my plan anytime?
             </h3>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
               Yes, you can upgrade or downgrade your plan at any time. Changes take effect
               immediately.
             </p>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">
+            <h3 className="font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
               Is there a free trial?
             </h3>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
               Pro and Team plans include a 7-day free trial. No credit card required to start.
             </p>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">
+            <h3 className="font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
               What payment methods do you accept?
             </h3>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
               We accept all major credit cards via Stripe. All payments are secure and
               encrypted.
             </p>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">
+            <h3 className="font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
               Can I get a refund?
             </h3>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
               Pro plans include a 7-day money-back guarantee. Contact support for refund
               requests.
             </p>

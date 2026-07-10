@@ -26,10 +26,10 @@ export default function OptimizePage() {
 
   return (
     <div>
-      <h1 className="mb-2 text-3xl font-bold text-gray-900">
+      <h1 className="mb-2 text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
         Optimize Your Prompts
       </h1>
-      <p className="mb-6 text-gray-600">
+      <p className="mb-6" style={{ color: 'var(--text-secondary)' }}>
         Use AI to compress, enhance, or rewrite your prompts for better results.
       </p>
 
@@ -38,7 +38,14 @@ export default function OptimizePage() {
 
         <div>
           {error && (
-            <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-900">
+            <div
+              className="rounded-lg border p-4"
+              style={{
+                borderColor: 'var(--red)',
+                backgroundColor: 'rgba(220, 38, 38, 0.08)',
+                color: 'var(--red)',
+              }}
+            >
               <p className="font-medium">Error</p>
               <p className="text-sm mt-1">{error}</p>
             </div>
@@ -54,8 +61,14 @@ export default function OptimizePage() {
           )}
 
           {!result && !error && (
-            <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 text-center">
-              <p className="text-gray-600">
+            <div
+              className="rounded-lg border p-6 text-center"
+              style={{
+                borderColor: 'var(--border)',
+                backgroundColor: 'var(--surface)',
+              }}
+            >
+              <p style={{ color: 'var(--text-secondary)' }}>
                 Enter a prompt and click Optimize to get started.
               </p>
             </div>

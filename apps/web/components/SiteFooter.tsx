@@ -45,13 +45,13 @@ const FOOTER_LINKS = [
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-white/8 bg-[#0a0a0b]">
+    <footer className="border-t" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--bg)' }}>
       <div className="max-w-6xl mx-auto px-6 py-16">
         <div className="grid grid-cols-2 md:grid-cols-6 gap-8 mb-12">
           {/* Brand block */}
           <div className="col-span-2">
             <Logo size="md" />
-            <p className="mt-3 text-sm text-white/40 leading-relaxed max-w-xs">
+            <p className="mt-3 text-sm leading-relaxed max-w-xs" style={{ color: 'var(--text-secondary)' }}>
               One prompt in. Every model&apos;s native format out. The translation
               layer for serious AI users.
             </p>
@@ -60,7 +60,16 @@ export function SiteFooter() {
                 href="https://x.com/promptforge"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-white/40 hover:border-white/20 hover:text-white/70 transition"
+                className="flex h-9 w-9 items-center justify-center rounded-lg border transition"
+                style={{ borderColor: 'var(--border)', color: 'var(--text-muted)' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--accent)';
+                  e.currentTarget.style.color = 'var(--accent)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                  e.currentTarget.style.color = 'var(--text-muted)';
+                }}
                 aria-label="X / Twitter"
               >
                 <Twitter className="h-4 w-4" />
@@ -69,7 +78,16 @@ export function SiteFooter() {
                 href="https://github.com/mikey21-web/prompt"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-white/40 hover:border-white/20 hover:text-white/70 transition"
+                className="flex h-9 w-9 items-center justify-center rounded-lg border transition"
+                style={{ borderColor: 'var(--border)', color: 'var(--text-muted)' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--accent)';
+                  e.currentTarget.style.color = 'var(--accent)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                  e.currentTarget.style.color = 'var(--text-muted)';
+                }}
                 aria-label="GitHub"
               >
                 <Github className="h-4 w-4" />
@@ -80,7 +98,7 @@ export function SiteFooter() {
           {/* Link columns */}
           {FOOTER_LINKS.map((col) => (
             <div key={col.title}>
-              <h4 className="text-xs font-semibold uppercase tracking-widest text-white mb-3">
+              <h4 className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: 'var(--text-primary)' }}>
                 {col.title}
               </h4>
               <ul className="space-y-2">
@@ -88,7 +106,10 @@ export function SiteFooter() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-white/40 hover:text-white/70 transition-colors"
+                      className="text-sm transition-colors"
+                      style={{ color: 'var(--text-muted)' }}
+                      onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
+                      onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
                     >
                       {link.label}
                     </Link>
@@ -99,12 +120,12 @@ export function SiteFooter() {
           ))}
         </div>
 
-        <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-white/30">
-            © 2026 PromptForge. All rights reserved.
+        <div className="border-t pt-6 flex flex-col md:flex-row items-center justify-between gap-3" style={{ borderColor: 'var(--border)' }}>
+          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+            &copy; 2026 PromptForge. All rights reserved.
           </p>
-          <p className="text-xs text-white/30">
-            Built for makers, by makers. ⚡
+          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+            Built for makers, by makers. &#x26A1;
           </p>
         </div>
       </div>

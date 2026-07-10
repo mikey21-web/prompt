@@ -54,7 +54,7 @@ export function QuotaCard() {
       {pct > 80 && (
         <div
           className="rounded-lg border p-3 text-xs space-y-2"
-          style={{ borderColor: 'rgba(251,191,36,0.2)', backgroundColor: 'var(--amber-dim)' }}
+          style={{ borderColor: 'rgba(217,119,6,0.2)', backgroundColor: 'rgba(217,119,6,0.08)' }}
         >
           <p style={{ color: 'var(--amber)' }}>
             Almost at your daily limit. Upgrade for more.

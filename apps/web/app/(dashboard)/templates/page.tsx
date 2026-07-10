@@ -17,17 +17,18 @@ export default function TemplatesPage() {
   return (
     <div className="max-w-6xl space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Templates</h1>
+        <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Templates</h1>
         <Link
           href="/templates/new"
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 text-sm font-medium transition-colors"
+          className="text-white px-4 py-2 rounded-lg hover:bg-indigo-700 text-sm font-medium transition-colors"
+          style={{ backgroundColor: 'var(--accent)' }}
         >
           + New Template
         </Link>
       </div>
 
       {templates?.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">
+        <div className="text-center py-16" style={{ color: 'var(--text-muted)' }}>
           No templates yet. Save a prompt to create one!
         </div>
       ) : (

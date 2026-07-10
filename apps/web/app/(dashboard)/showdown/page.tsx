@@ -151,16 +151,20 @@ export default function ShowdownPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Showdown</h1>
-        <p className="mt-2 text-gray-600">
+        <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Showdown</h1>
+        <p className="mt-2" style={{ color: 'var(--text-secondary)' }}>
           Same input, every model&apos;s native format. Side by side. Click Run on any column to see the actual response.
         </p>
       </div>
 
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <div
+        className="rounded-lg border p-6"
+        style={{ backgroundColor: 'var(--surface-raised)', borderColor: 'var(--border)', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}
+      >
         <label
           htmlFor="showdown-input"
-          className="block text-sm font-medium text-gray-700"
+          className="block text-sm font-medium"
+          style={{ color: 'var(--text-secondary)' }}
         >
           Plain English input
         </label>
@@ -171,11 +175,16 @@ export default function ShowdownPage() {
           disabled={loading}
           rows={4}
           placeholder="explain how database transactions work to a 5 year old using a story"
-          className="mt-2 block w-full rounded-md border border-gray-300 p-3 text-sm shadow-sm focus:border-violet-500 focus:ring-1 focus:ring-violet-500 disabled:bg-gray-50"
+          className="mt-2 block w-full rounded-md border p-3 text-sm outline-none transition-all"
+          style={{
+            borderColor: 'var(--border)',
+            backgroundColor: 'var(--bg)',
+            color: 'var(--text-primary)',
+          }}
         />
 
         <div className="mt-4">
-          <p className="text-sm font-medium text-gray-700">Targets</p>
+          <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>Targets</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {SHOWDOWN_MODELS.map((id) => {
               const m = MODELS[id];
@@ -186,11 +195,16 @@ export default function ShowdownPage() {
                   type="button"
                   onClick={() => toggle(id)}
                   disabled={loading}
-                  className={`rounded-full border px-3 py-1 text-xs font-medium ${
-                    isOn
-                      ? 'border-violet-500 bg-violet-50 text-violet-700'
-                      : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
-                  }`}
+                  className="rounded-full border px-3 py-1 text-xs font-medium transition-all"
+                  style={isOn ? {
+                    borderColor: 'var(--accent)',
+                    backgroundColor: 'var(--accent-dim)',
+                    color: 'var(--accent)',
+                  } : {
+                    borderColor: 'var(--border)',
+                    backgroundColor: 'var(--surface-raised)',
+                    color: 'var(--text-secondary)',
+                  }}
                 >
                   {m.label}
                 </button>
@@ -204,7 +218,12 @@ export default function ShowdownPage() {
             type="button"
             onClick={start}
             disabled={loading || !input.trim() || selected.size === 0}
-            className="inline-flex items-center rounded-md bg-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 disabled:bg-violet-400"
+            className="inline-flex items-center rounded-md px-4 py-2 text-sm font-semibold transition-all disabled:opacity-60"
+            style={{
+              backgroundColor: 'var(--accent)',
+              color: '#0b0b0e',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+            }}
           >
             <Swords className="-ml-1 mr-2 h-4 w-4" />
             {loading ? 'Running…' : 'Run showdown'}
@@ -214,7 +233,13 @@ export default function ShowdownPage() {
               <button
                 type="button"
                 onClick={share}
-                className="inline-flex items-center rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+                className="inline-flex items-center rounded-md border px-4 py-2 text-sm font-medium transition-all"
+                style={{
+                  borderColor: 'var(--border)',
+                  backgroundColor: 'var(--surface-raised)',
+                  color: 'var(--text-secondary)',
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+                }}
               >
                 <Share2 className="-ml-1 mr-2 h-4 w-4" />
                 {shareSlug ? 'Link copied!' : 'Share link'}
@@ -222,7 +247,13 @@ export default function ShowdownPage() {
               <button
                 type="button"
                 onClick={tweet}
-                className="inline-flex items-center rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+                className="inline-flex items-center rounded-md border px-4 py-2 text-sm font-medium transition-all"
+                style={{
+                  borderColor: 'var(--border)',
+                  backgroundColor: 'var(--surface-raised)',
+                  color: 'var(--text-secondary)',
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+                }}
               >
                 <Send className="-ml-1 mr-2 h-4 w-4" />
                 Tweet this
@@ -232,7 +263,8 @@ export default function ShowdownPage() {
                   href={`/s/${shareSlug}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-violet-600 hover:text-violet-800 underline"
+                  className="text-xs underline"
+                  style={{ color: 'var(--accent)' }}
                 >
                   View public page →
                 </a>
@@ -241,7 +273,7 @@ export default function ShowdownPage() {
           )}
         </div>
 
-        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-3 text-sm" style={{ color: 'var(--red)' }}>{error}</p>}
       </div>
 
       {result && (
@@ -253,24 +285,30 @@ export default function ShowdownPage() {
             return (
               <div
                 key={out.target}
-                className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm flex flex-col"
+                className="rounded-lg border p-4 flex flex-col"
+                style={{
+                  borderColor: 'var(--border)',
+                  backgroundColor: 'var(--surface-raised)',
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+                }}
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-sm font-semibold text-gray-900">
+                    <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
                       {m.label}
                     </h3>
-                    <p className="text-xs text-gray-500">{m.format}</p>
+                    <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{m.format}</p>
                   </div>
                   {!out.error && (
                     <button
                       type="button"
                       onClick={() => copy(out.target, out.optimized)}
-                      className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+                      className="rounded p-1 transition-all"
+                      style={{ color: 'var(--text-muted)' }}
                       aria-label="Copy"
                     >
                       {copiedTarget === out.target ? (
-                        <Check className="h-4 w-4 text-green-600" />
+                        <Check className="h-4 w-4" style={{ color: 'var(--green)' }} />
                       ) : (
                         <Copy className="h-4 w-4" />
                       )}
@@ -278,17 +316,24 @@ export default function ShowdownPage() {
                   )}
                 </div>
                 {out.error ? (
-                  <p className="mt-3 text-xs text-red-600">{out.error}</p>
+                  <p className="mt-3 text-xs" style={{ color: 'var(--red)' }}>{out.error}</p>
                 ) : (
                   <>
-                    <pre className="mt-3 whitespace-pre-wrap rounded bg-gray-50 p-3 text-xs text-gray-900 overflow-auto max-h-64">
+                    <pre
+                      className="mt-3 whitespace-pre-wrap rounded p-3 text-xs overflow-auto max-h-64"
+                      style={{ backgroundColor: 'var(--surface)', color: 'var(--text-primary)' }}
+                    >
                       {out.optimized}
                     </pre>
                     <button
                       type="button"
                       onClick={() => run(out.target, out.optimized)}
                       disabled={isRunning}
-                      className="mt-3 inline-flex items-center justify-center rounded-md border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-60"
+                      className="mt-3 inline-flex items-center justify-center rounded-md border px-3 py-1.5 text-xs font-medium disabled:opacity-60 transition-all"
+                      style={{
+                        borderColor: 'var(--border)',
+                        color: 'var(--text-secondary)',
+                      }}
                     >
                       {isRunning ? (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -299,11 +344,14 @@ export default function ShowdownPage() {
                     </button>
                     {runRes && (
                       <div
-                        className={`mt-3 rounded p-3 text-xs ${
-                          runRes.callable
-                            ? 'bg-emerald-50 text-emerald-900'
-                            : 'bg-amber-50 text-amber-900'
-                        }`}
+                        className="mt-3 rounded p-3 text-xs"
+                        style={runRes.callable ? {
+                          backgroundColor: 'rgba(22, 163, 74, 0.08)',
+                          color: 'var(--green)',
+                        } : {
+                          backgroundColor: 'rgba(217, 119, 6, 0.08)',
+                          color: 'var(--amber)',
+                        }}
                       >
                         <p className="text-[10px] font-semibold uppercase tracking-wide">
                           {runRes.callable ? `${m.label} response` : 'Note'}

@@ -33,20 +33,24 @@ export default function ReversePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Reverse</h1>
-        <p className="mt-2 text-gray-600">
+        <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Reverse</h1>
+        <p className="mt-2" style={{ color: 'var(--text-secondary)' }}>
           Paste a prompt you found. We&apos;ll show you what it&apos;s actually trying to do.
         </p>
       </div>
 
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <div
+        className="rounded-lg border p-6"
+        style={{ backgroundColor: 'var(--surface-raised)', borderColor: 'var(--border)', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}
+      >
         <label
           htmlFor="reverse-input"
-          className="block text-sm font-medium text-gray-700"
+          className="block text-sm font-medium"
+          style={{ color: 'var(--text-secondary)' }}
         >
           Prompt to reverse
         </label>
-        <p className="mt-1 text-xs text-gray-500">
+        <p className="mt-1 text-xs" style={{ color: 'var(--text-muted)' }}>
           Works on any format — XML, markdown, Midjourney tokens, shot lists.
         </p>
         <textarea
@@ -56,24 +60,37 @@ export default function ReversePage() {
           disabled={loading}
           rows={8}
           placeholder="<role>You are a senior copywriter…</role><task>…</task>"
-          className="mt-2 block w-full rounded-md border border-gray-300 p-3 text-sm font-mono shadow-sm focus:border-violet-500 focus:ring-1 focus:ring-violet-500 disabled:bg-gray-50"
+          className="mt-2 block w-full rounded-md border p-3 text-sm font-mono outline-none transition-all"
+          style={{
+            borderColor: 'var(--border)',
+            backgroundColor: 'var(--bg)',
+            color: 'var(--text-primary)',
+          }}
         />
         <button
           type="button"
           onClick={run}
           disabled={loading || prompt.trim().length < 10}
-          className="mt-4 inline-flex items-center rounded-md bg-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 disabled:bg-violet-400"
+          className="mt-4 inline-flex items-center rounded-md px-4 py-2 text-sm font-semibold transition-all disabled:opacity-60"
+          style={{
+            backgroundColor: 'var(--accent)',
+            color: '#0b0b0e',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+          }}
         >
           <Microscope className="-ml-1 mr-2 h-4 w-4" />
           {loading ? 'Analyzing…' : 'Reverse'}
         </button>
-        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-3 text-sm" style={{ color: 'var(--red)' }}>{error}</p>}
       </div>
 
       {explanation && (
-        <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="text-sm font-medium text-gray-700">Plain English breakdown</h2>
-          <pre className="mt-3 whitespace-pre-wrap text-sm text-gray-900">
+        <div
+          className="rounded-lg border p-6"
+          style={{ backgroundColor: 'var(--surface-raised)', borderColor: 'var(--border)', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}
+        >
+          <h2 className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>Plain English breakdown</h2>
+          <pre className="mt-3 whitespace-pre-wrap text-sm" style={{ color: 'var(--text-primary)' }}>
             {explanation}
           </pre>
         </div>

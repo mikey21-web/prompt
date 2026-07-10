@@ -47,10 +47,10 @@ export default function ThreadDetailPage() {
   }, [compareTarget, editing]);
 
   if (data === undefined) {
-    return <div className="animate-pulse h-64 rounded-lg bg-gray-200" />;
+    return <div className="animate-pulse h-64 rounded-lg" style={{ backgroundColor: 'var(--border)' }} />;
   }
   if (data === null || !thread || !current) {
-    return <p className="text-sm text-gray-600">Thread not found.</p>;
+    return <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Thread not found.</p>;
   }
 
   const handleSave = async () => {
@@ -84,9 +84,9 @@ export default function ThreadDetailPage() {
     <div className="space-y-6">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{thread.title}</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            <span className="rounded bg-gray-100 px-2 py-0.5 font-mono text-xs">
+          <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{thread.title}</h1>
+          <p className="mt-1 text-sm" style={{ color: 'var(--text-muted)' }}>
+            <span className="rounded px-2 py-0.5 font-mono text-xs" style={{ backgroundColor: 'var(--surface)' }}>
               {thread.target}
             </span>{' '}
             · {thread.modality} · v{current.versionNum} of {versions.length}
@@ -95,11 +95,12 @@ export default function ThreadDetailPage() {
         <button
           type="button"
           onClick={handleCopy}
-          className="inline-flex items-center gap-1.5 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+          className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium hover:bg-gray-50"
+          style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface-raised)', color: 'var(--text-secondary)' }}
         >
           {copied ? (
             <>
-              <Check className="h-3.5 w-3.5 text-green-600" /> Copied
+              <Check className="h-3.5 w-3.5" style={{ color: 'var(--green)' }} /> Copied
             </>
           ) : (
             <>
@@ -111,12 +112,13 @@ export default function ThreadDetailPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Editor */}
-        <div className="lg:col-span-2 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+        <div className="lg:col-span-2 rounded-lg border p-4" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface-raised)', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
           <textarea
             value={editing}
             onChange={(e) => setDraft(e.target.value)}
             rows={20}
-            className="block w-full rounded-md border border-gray-200 p-3 text-sm font-mono shadow-inner focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+            className="block w-full rounded-md border p-3 text-sm font-mono shadow-inner focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+            style={{ borderColor: 'var(--border)' }}
           />
           {draft !== null && (
             <div className="mt-3 flex items-center gap-2">
@@ -125,12 +127,14 @@ export default function ThreadDetailPage() {
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="Optional commit message"
-                className="flex-1 rounded-md border border-gray-200 px-3 py-1.5 text-xs"
+                className="flex-1 rounded-md border px-3 py-1.5 text-xs"
+                style={{ borderColor: 'var(--border)' }}
               />
               <button
                 type="button"
                 onClick={() => setDraft(null)}
-                className="rounded-md border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded-md border px-3 py-1.5 text-xs font-medium hover:bg-gray-50"
+                style={{ borderColor: 'var(--border)', color: 'var(--text-secondary)' }}
               >
                 Discard
               </button>
@@ -138,7 +142,8 @@ export default function ThreadDetailPage() {
                 type="button"
                 onClick={handleSave}
                 disabled={saving || draft.trim() === current.content.trim()}
-                className="inline-flex items-center rounded-md bg-violet-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-violet-700 disabled:bg-violet-400"
+                className="inline-flex items-center rounded-md px-3 py-1.5 text-xs font-semibold text-white hover:bg-violet-700 disabled:bg-violet-400"
+                style={{ backgroundColor: 'var(--accent)' }}
               >
                 <Save className="-ml-0.5 mr-1.5 h-3.5 w-3.5" />
                 {saving ? 'Saving…' : 'Save version'}
@@ -148,26 +153,26 @@ export default function ThreadDetailPage() {
         </div>
 
         {/* Version timeline */}
-        <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-          <h3 className="text-sm font-semibold text-gray-900">History</h3>
+        <div className="rounded-lg border p-4" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface-raised)', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
+          <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>History</h3>
           <ul className="mt-3 space-y-2">
             {[...versions].reverse().map((v) => (
               <li
                 key={v._id}
-                className={`rounded border p-2 text-xs ${
-                  v._id === current._id
-                    ? 'border-violet-300 bg-violet-50'
-                    : 'border-gray-200 bg-white'
-                }`}
+                className="rounded border p-2 text-xs"
+                style={{
+                  borderColor: v._id === current._id ? 'rgba(124, 58, 237, 0.3)' : 'var(--border)',
+                  backgroundColor: v._id === current._id ? 'var(--accent-dim)' : 'var(--surface-raised)',
+                }}
               >
                 <div className="flex items-center justify-between">
                   <span className="font-medium">v{v.versionNum}</span>
-                  <span className="text-gray-500">
+                  <span style={{ color: 'var(--text-muted)' }}>
                     {new Date(v.createdAt).toLocaleTimeString()}
                   </span>
                 </div>
                 {v.note && (
-                  <p className="mt-0.5 text-gray-600 italic">{v.note}</p>
+                  <p className="mt-0.5 italic" style={{ color: 'var(--text-secondary)' }}>{v.note}</p>
                 )}
                 <div className="mt-1.5 flex gap-1">
                   <button
@@ -179,7 +184,7 @@ export default function ThreadDetailPage() {
                   </button>
                   {v._id !== current._id && (
                     <>
-                      <span className="text-gray-300">·</span>
+                        <span style={{ color: 'var(--border)' }}>·</span>
                       <button
                         type="button"
                         onClick={() => handleRevert(v.versionNum)}
@@ -199,11 +204,11 @@ export default function ThreadDetailPage() {
 
       {/* Diff viewer */}
       {diff && compareTarget && (
-        <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-          <h3 className="text-sm font-semibold text-gray-900">
+        <div className="rounded-lg border p-4" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface-raised)', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
+          <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
             Diff: v{compareTarget.versionNum} → current
           </h3>
-          <pre className="mt-3 overflow-auto rounded bg-gray-50 p-3 text-xs font-mono leading-relaxed">
+          <pre className="mt-3 overflow-auto rounded p-3 text-xs font-mono leading-relaxed" style={{ backgroundColor: 'var(--surface)' }}>
             {diff.map((seg, i) => (
               <span
                 key={i}
@@ -220,7 +225,7 @@ export default function ThreadDetailPage() {
                       ? '#15803d'
                       : seg.op === 'removed'
                         ? '#b91c1c'
-                        : '#374151',
+                        : 'var(--text-secondary)',
                 }}
               >
                 {seg.op === 'added' ? '+' : seg.op === 'removed' ? '-' : ' '}{' '}

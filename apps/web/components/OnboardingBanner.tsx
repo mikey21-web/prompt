@@ -24,7 +24,7 @@ export function OnboardingBanner() {
     <div
       className="relative overflow-hidden rounded-xl border p-5 md:p-6"
       style={{
-        borderColor: 'var(--accent-border)',
+        borderColor: 'rgba(124,58,237,0.2)',
         backgroundColor: 'var(--accent-dim)',
       }}
     >
@@ -54,7 +54,7 @@ export function OnboardingBanner() {
           href="/forge"
           className="group rounded-lg border p-3.5 transition-all hover:translate-y-[-1px]"
           style={{
-            borderColor: 'var(--accent-border)',
+            borderColor: 'rgba(124,58,237,0.2)',
             backgroundColor: 'var(--surface)',
           }}
         >
@@ -79,7 +79,7 @@ export function OnboardingBanner() {
           href="/showdown"
           className="group rounded-lg border p-3.5 transition-all hover:translate-y-[-1px]"
           style={{
-            borderColor: 'var(--accent-border)',
+            borderColor: 'rgba(124,58,237,0.2)',
             backgroundColor: 'var(--surface)',
           }}
         >
@@ -104,7 +104,7 @@ export function OnboardingBanner() {
           href="/install"
           className="group rounded-lg border p-3.5 transition-all hover:translate-y-[-1px]"
           style={{
-            borderColor: 'var(--accent-border)',
+            borderColor: 'rgba(124,58,237,0.2)',
             backgroundColor: 'var(--surface)',
           }}
         >

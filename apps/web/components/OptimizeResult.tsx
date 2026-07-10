@@ -38,8 +38,8 @@ export function OptimizeResult({
   const savedTokens = originalTokens ? originalTokens - tokens.output : 0;
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-      <h3 className="mb-4 text-lg font-semibold text-gray-900">Result</h3>
+    <div className="rounded-lg border p-6 shadow-sm" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface-raised)' }}>
+      <h3 className="mb-4 text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Result</h3>
 
       <PromptDiff
         original={original}
@@ -50,13 +50,13 @@ export function OptimizeResult({
       />
 
       <div className="mt-6 grid grid-cols-2 gap-4">
-        <div className="rounded-lg bg-gray-50 p-4">
-          <p className="text-sm text-gray-600">Input Tokens</p>
-          <p className="text-2xl font-bold text-gray-900">{tokens.input}</p>
+        <div className="rounded-lg p-4" style={{ backgroundColor: 'var(--surface)' }}>
+          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Input Tokens</p>
+          <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{tokens.input}</p>
         </div>
-        <div className="rounded-lg bg-gray-50 p-4">
-          <p className="text-sm text-gray-600">Output Tokens</p>
-          <p className="text-2xl font-bold text-gray-900">{tokens.output}</p>
+        <div className="rounded-lg p-4" style={{ backgroundColor: 'var(--surface)' }}>
+          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Output Tokens</p>
+          <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{tokens.output}</p>
         </div>
       </div>
 
@@ -69,7 +69,10 @@ export function OptimizeResult({
       <button
         onClick={handleCopy}
         aria-label={copied ? 'Copied to clipboard' : 'Copy optimized prompt to clipboard'}
-        className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 transition-colors"
+        className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded px-4 py-2 transition-colors"
+        style={{ backgroundColor: 'var(--accent)', color: '#ffffff' }}
+        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-hover)'}
+        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--accent)'}
       >
         {copied ? (
           <>
