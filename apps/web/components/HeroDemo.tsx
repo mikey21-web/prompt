@@ -64,27 +64,27 @@ export function HeroDemo() {
   const current = OUTPUTS[active];
 
   return (
-    <div className="rounded-2xl border border-black/8 bg-white overflow-hidden shadow-[0_20px_60px_-20px_rgba(0,0,0,0.15)]">
+    <div className="rounded-2xl border border-white/8 bg-[#111113] overflow-hidden shadow-[0_20px_60px_-20px_rgba(0,0,0,0.6)]">
       {/* Input */}
-      <div className="border-b border-black/8 bg-[#f7f7f8] px-5 py-4">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-black/40 mb-2">
+      <div className="border-b border-white/8 bg-[#0d0d0f] px-5 py-4">
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-white/40 mb-2">
           Input
         </p>
-        <p className="text-sm font-medium text-black/90 leading-relaxed">
+        <p className="text-sm font-medium text-white/90 leading-relaxed">
           &ldquo;{INPUT}&rdquo;
         </p>
       </div>
 
       {/* Model tabs */}
-      <div className="flex border-b border-black/8 bg-[#f7f7f8]">
+      <div className="flex border-b border-white/8 bg-[#0d0d0f]">
         {OUTPUTS.map((o, i) => (
           <button
             key={o.model}
             onClick={() => setActive(i)}
             className={`relative flex-1 px-2 py-3 text-[11px] font-medium transition-colors duration-150 ${
               i === active
-                ? 'text-black/90'
-                : 'text-black/40 hover:text-black/60'
+                ? 'text-white/90'
+                : 'text-white/40 hover:text-white/60'
             }`}
           >
             <span className="hidden sm:inline">{o.model}</span>
@@ -101,12 +101,12 @@ export function HeroDemo() {
       </div>
 
       {/* Output */}
-      <div className="bg-white p-5 min-h-[200px]">
+      <div className="bg-[#080809] p-5 min-h-[200px]">
         <div className="flex items-center justify-between mb-3">
           <span className="text-[10px] font-semibold uppercase tracking-widest text-[#7c3aed]">
             {current.format}
           </span>
-          <span className="text-[10px] text-black/40 font-mono">
+          <span className="text-[10px] text-white/40 font-mono">
             auto-detected
           </span>
         </div>
@@ -117,7 +117,7 @@ export function HeroDemo() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
-            className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-black/90"
+            className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-white/90"
           >
             {current.body}
           </motion.pre>
