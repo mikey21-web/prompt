@@ -4,7 +4,7 @@ import { internal } from "./_generated/api";
 import OpenAI from "openai";
 import {
   buildSystemPrompt,
-  countTokensApprox,
+  countTokens,
   type Mode,
   type TargetModel,
   type Tone,
@@ -105,8 +105,8 @@ export const optimizePrompt = action({
     });
 
     const optimized = response.choices[0].message.content ?? "";
-    const tokensIn = countTokensApprox(args.prompt);
-    const tokensOut = countTokensApprox(optimized);
+    const tokensIn = countTokens(args.prompt, args.mode);
+    const tokensOut = countTokens(optimized, args.mode);
     const savedTokens = Math.max(0, tokensIn - tokensOut);
 
     await ctx.runMutation(internal.optimize.savePromptAndLog, {
@@ -217,8 +217,8 @@ export const optimizeViaApi = action({
     });
 
     const optimized = response.choices[0].message.content ?? "";
-    const tokensIn = countTokensApprox(prompt);
-    const tokensOut = countTokensApprox(optimized);
+    const tokensIn = countTokens(prompt, mode);
+    const tokensOut = countTokens(optimized, mode);
     const savedTokens = Math.max(0, tokensIn - tokensOut);
 
     await ctx.runMutation(internal.optimize.savePromptAndLog, {

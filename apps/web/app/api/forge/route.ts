@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { api } from "@promptforge/convex/convex/_generated/api";
 import { logger } from "@/lib/logger";
+import { aiLimiter, identifyRequest } from "@/lib/ratelimit";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -28,10 +29,31 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const identifier = userId || identifyRequest(req);
+    const { success, limit, remaining, reset } = await aiLimiter.limit(identifier);
+    if (!success) {
+      const res = NextResponse.json(
+        { error: "Too many requests. Please slow down." },
+        { status: 429, headers: cors }
+      );
+      res.headers.set("X-RateLimit-Limit", String(limit));
+      res.headers.set("X-RateLimit-Remaining", String(remaining));
+      res.headers.set("X-RateLimit-Reset", String(reset));
+      return res;
+    }
+
     const body = await req.json().catch(() => null);
     if (!body || typeof body.input !== "string") {
       return NextResponse.json(
-        { error: "Body must be { input: string, target?: string }" },
+        { error: "Body must be { input: string, target?: string, mode?: string }" },
+        { status: 400, headers: cors }
+      );
+    }
+
+    const mode = body.mode ?? "auto";
+    if (mode !== "auto" && mode !== "compress" && mode !== "enhance") {
+      return NextResponse.json(
+        { error: "mode must be 'auto', 'compress', or 'enhance'" },
         { status: 400, headers: cors }
       );
     }
@@ -54,6 +76,7 @@ export async function POST(req: NextRequest) {
     const result = await convex.action(api.promptforge.translate, {
       input: body.input,
       target: body.target,
+      mode,
     });
 
     logger.info("forge.api.translate", { userId });

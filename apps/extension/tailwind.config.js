@@ -7,6 +7,15 @@ export default {
     "./src/**/*.{ts,tsx}",
     "../../packages/ui/src/**/*.{ts,tsx}",
   ],
-  theme: { extend: {} },
+  theme: {
+    extend: {
+      colors: {
+        surface: "#131316",
+        "surface-hover": "#1a1a1f",
+        muted: "#5c5c66",
+        secondary: "#9b9ba3",
+      },
+    },
+  },
   plugins: [],
 };

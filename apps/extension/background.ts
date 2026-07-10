@@ -56,6 +56,12 @@ function createContextMenu() {
   });
 
   chrome.contextMenus.create({
+    id: "promptforge-auto",
+    parentId: "promptforge-optimize",
+    title: "Auto (recommended)",
+  });
+
+  chrome.contextMenus.create({
     id: "promptforge-compress",
     parentId: "promptforge-optimize",
     title: "Compress",
@@ -66,12 +72,6 @@ function createContextMenu() {
     parentId: "promptforge-optimize",
     title: "Enhance",
   });
-
-  chrome.contextMenus.create({
-    id: "promptforge-rewrite",
-    parentId: "promptforge-optimize",
-    title: "Rewrite",
-  });
 }
 
 // Handle context menu clicks
@@ -79,7 +79,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if (!tab?.id) return;
 
   const itemId = String(info.menuItemId);
-  const mode = itemId.replace("promptforge-", "") as "compress" | "enhance" | "rewrite";
+  const mode = itemId.replace("promptforge-", "") as "auto" | "compress" | "enhance";
   if (!mode) return;
 
   // Send to popup with selected text

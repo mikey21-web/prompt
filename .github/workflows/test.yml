@@ -1,4 +1,4 @@
-name: Test & Lint
+name: CI — Test, Lint & Typecheck
 
 on:
   push:
@@ -6,35 +6,42 @@ on:
   pull_request:
     branches: [master, main, develop]
 
+env:
+  NEXT_PUBLIC_CONVEX_URL: https://placeholder.convex.cloud
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_Y2xlcmsucGxhY2Vob2xkZXIubGNsLmRldiQ
+  CLERK_SECRET_KEY: sk_test_placeholder
+  NEXT_PUBLIC_APP_URL: http://localhost:3000
+
 jobs:
-  test:
+  quality:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
+      - run: npm ci
 
-      - name: Install dependencies
-        run: npm ci
+      # TypeScript type-check across all packages (uses turbo for parallelism)
+      - name: Type-check all packages
+        run: npx turbo lint --continue
 
-      - name: Lint web app
-        working-directory: apps/web
-        run: npm run lint
+      # Run all tests across the monorepo
+      - name: Test all packages
+        run: npx turbo test --continue
 
-      - name: Run unit + integration tests
-        working-directory: apps/web
-        run: npm run test:run
-
+      # Build web app (verifies Next.js compilation)
       - name: Build web app
         working-directory: apps/web
-        env:
-          # Build needs valid-shaped env vars; values can be placeholders
-          NEXT_PUBLIC_CONVEX_URL: https://placeholder.convex.cloud
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_Y2xlcmsucGxhY2Vob2xkZXIubGNsLmRldiQ
-          CLERK_SECRET_KEY: sk_test_placeholder
-          NEXT_PUBLIC_APP_URL: http://localhost:3000
         run: npm run build
+
+      # Build extension (verifies Plasmo compilation)
+      - name: Build extension
+        working-directory: apps/extension
+        run: npm run build
+
+      # Verify core package exports
+      - name: Verify core package
+        working-directory: packages/core
+        run: npx tsc --noEmit

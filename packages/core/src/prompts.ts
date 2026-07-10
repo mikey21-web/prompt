@@ -1,6 +1,8 @@
 import type { Mode, TargetModel, Tone } from "./types";
+import { countTokens } from "./token-count";
 
-const MODEL_HINTS: Record<TargetModel, string> = {
+const MODEL_HINTS: Partial<Record<TargetModel, string>> = {
+  "auto": "",
   "gpt-4o-mini":
     "Format for GPT-4o Mini: use clear, concise markdown formatting with bullet points.",
   "gpt-4o":
@@ -15,6 +17,8 @@ export function buildSystemPrompt(
   const modelHint = MODEL_HINTS[targetModel];
 
   const modeInstructions: Record<Mode, string> = {
+    auto: `You are a senior prompt engineer. Decide whether this prompt needs compression (already clear, trim filler) or enhancement (vague, needs role/task/output-format/constraints), then apply it. Return ONLY the optimized prompt — no explanation, no preamble.`,
+
     compress: `You are a prompt compression expert. Remove filler words, hedging language ("I think", "maybe", "please"), redundancy, and unnecessary context while preserving 100% of the original intent. Return ONLY the compressed prompt — no explanation, no preamble. Target 30-55% token reduction.`,
 
     enhance: `You are a prompt engineering expert. Restructure the prompt to include: a role definition, clear task description, output format specification, and relevant constraints. Return ONLY the enhanced prompt — no explanation, no preamble.`,
@@ -28,10 +32,10 @@ export function buildSystemPrompt(
     template: `You are a prompt template specialist. Fill in the template placeholders with contextually appropriate values based on the user's prompt. Return ONLY the completed prompt — no explanation.`,
   };
 
-  return `${modeInstructions[mode]}\n\n${modelHint}`;
+  return modelHint ? `${modeInstructions[mode]}\n\n${modelHint}` : modeInstructions[mode];
 }
 
-export function countTokensApprox(text: string): number {
-  // ~4 chars per token rough approximation (matches OpenAI's general guidance)
-  return Math.ceil(text.length / 4);
+/** @deprecated Use `countTokens` from `@promptforge/core` instead. */
+export function countTokensApprox(text: string, mode?: string): number {
+  return countTokens(text, mode);
 }

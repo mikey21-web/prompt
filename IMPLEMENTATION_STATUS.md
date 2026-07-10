@@ -1,293 +1,145 @@
-# PromptForge Implementation Status
+# PromptForge — Implementation Status
 
-Last updated: 2026-05-20
+**Last updated:** 2026-07-10
 
-## Project Summary
-
-Full-stack AI prompt optimization platform. Turborepo monorepo with 4 applications (web, extension, desktop, backend) and 2 shared packages. Target launch: Q3 2026.
+**Project:** Full-stack AI prompt optimization platform. Turborepo monorepo with **5 application surfaces**, **2 shared packages**, and a **CLI**.
 
 ---
 
-## Phase 1: Foundation & Core Types ✅ COMPLETE
+## Status Board
 
-| Item | Status | Notes |
-|------|--------|-------|
-| Turborepo setup | ✅ | Root package.json, pnpm-workspace.yaml, turbo.json configured |
-| @promptforge/core package | ✅ | Types, API schemas, system prompts for 3 modes (compress, enhance, rewrite) |
-| Git workflow | ✅ | main/master branches, commit strategy documented |
+### Core Engine (`@promptforge/core`)
+| Component | Status |
+|-----------|--------|
+| Two-stage translation: intent extraction → format synthesis | ✅ |
+| 6 optimization modes (compress, enhance, rewrite, tone, qa, template) | ✅ |
+| 14 models across 5 modalities (text, image, video, audio, code) | ✅ |
+| Multi-provider routing (OpenAI, Anthropic, Google) | ✅ |
+| Per-model style guides with format specs, rules, and examples | ✅ |
+| Reverse-engineering (any prompt → plain English) | ✅ |
+| A/B comparison engine (raw vs. optimized on the same model) | ✅ |
+| Token counting | ✅ |
+| Prompt diff (before/after comparison) | ✅ |
 
----
+### Backend (Convex)
+| Component | Status |
+|-----------|--------|
+| Database schema: users, prompts, templates, forgeRuns, forgeRatings, forgeShares, abVotes, promptThreads, promptVersions, customStyleGuides, workspaces, usageLogs | ✅ |
+| Clerk JWT authentication | ✅ |
+| Quota gating (per-user daily limits) | ✅ |
+| `translate` action (forge) | ✅ |
+| `showdown` action (N parallel synthesis calls) | ✅ |
+| `reverse` action | ✅ |
+| `run` action (execute prompt against any callable model) | ✅ |
+| `abCompare` action | ✅ |
+| `rateRun` action (thumbs up/down) | ✅ |
+| Custom style guide merge support | ✅ |
+| 50 built-in library templates (seed mutation) | ✅ |
 
-## Phase 2: Shared UI Components ✅ COMPLETE
+### Web Dashboard (`apps/web` — Next.js 14)
+| Page | Status |
+|------|--------|
+| Forge (plain English → model-native prompt) | ✅ |
+| Showdown (compare 4+ models simultaneously) | ✅ |
+| Reverse (prompt → plain English) | ✅ |
+| Threads (versioned prompt editing) | ✅ |
+| History | ✅ |
+| Templates | ✅ |
+| Library (50 starter templates) | ✅ |
+| Style Guides (per-user custom guides) | ✅ |
+| Settings | ✅ |
+| Billing (Stripe checkout) | ✅ |
+| Admin (library seed) | ✅ |
+| Dashboard | ✅ |
+| Observability (run stats, ratings, A/B vote stats) | ✅ |
+| Eval (A/B comparison tool) | ✅ |
+| Benchmark | ✅ |
+| Showcase | ✅ |
+| Pricing | ✅ |
+| Install | ✅ |
+| Embed (iframed translator tool) | ✅ |
+| Share (`/s/:slug` — public forge shares) | ✅ |
 
-| Component | Status | Used In | Notes |
-|-----------|--------|---------|-------|
-| UsageBar | ✅ | Web, Extension, Desktop | Progress bar showing quota usage |
-| PlanBadge | ✅ | Web, Extension | Badge displaying current plan tier |
-| ModeButton | ✅ | All platforms | Mode selector (Compress/Enhance/Rewrite) |
-| PromptDiff | ✅ | Web, Desktop | Side-by-side diff viewer |
-| TemplateCard | ✅ | Web, Desktop | Template preview card |
-| TokenSavings | ✅ | Web, Desktop | Token reduction metric |
+### Browser Extension (`apps/extension` — Plasmo)
+| Feature | Status |
+|---------|--------|
+| Popup UI (mode buttons, input, result display) | ✅ |
+| Options page | ✅ |
+| Content script (AI host page integration) | ✅ |
+| Background service worker | ✅ |
+| Context menu ("Optimize prompt" right-click) | ✅ |
+| chrome.storage for settings | ✅ |
+| Multi-browser: Chrome (MV3), Firefox (MV3), Edge (MV3) | ✅ |
 
----
+### Desktop App (`apps/desktop` — Tauri v2)
+| Feature | Status |
+|---------|--------|
+| Window management (1200×800, 600×400 min) | ✅ |
+| Auto-updater | ✅ |
+| Offline persistence | ✅ |
+| Responsive layout | ✅ |
+| Multi-platform: Windows (MSI), macOS (DMG), Linux (AppImage) | ✅ |
 
-## Phase 3: Backend (Convex) ✅ COMPLETE
+### VS Code Extension (`apps/vscode`)
+| Feature | Status |
+|---------|--------|
+| Forge selection command | ✅ |
+| Showdown (all models) command | ✅ |
+| Reverse (prompt → English) command | ✅ |
+| API key configuration | ✅ |
 
-| Component | Status | Details |
-|-----------|--------|---------|
-| Database schema | ✅ | users, prompts, templates, workspaces tables |
-| Authentication | ✅ | Clerk JWT validation, user context |
-| Optimize action | ✅ | OpenAI integration, token counting, usage deduction |
-| CRUD operations | ✅ | Create/read/update/delete for prompts, templates |
-| REST API | ✅ | /optimize, /usage, /history, /templates endpoints |
-| Webhooks | ✅ | Stripe/Razorpay payment event handling |
-| Real-time sync | ✅ | Convex subscriptions for usage updates |
+### Discord Bot (`apps/discord-bot`)
+| Feature | Status |
+|---------|--------|
+| `/forge` command | ✅ |
+| `/showdown` command | ✅ |
+| `/reverse` command | ✅ |
 
----
+### Shared Packages
+| Package | Status |
+|---------|--------|
+| `@promptforge/ui` — UsageBar, PlanBadge, ModeButton, PromptDiff, TemplateCard, TokenSavings | ✅ |
+| `@promptforge/cli` — CLI tool (`promptforge` / `pf` binary) | ✅ |
 
-## Phase 4: Web Dashboard (Next.js 14) ⏳ IN PROGRESS
+### REST API (REST shims for Convex actions)
+| Endpoint | Status |
+|----------|--------|
+| `POST /api/forge` — translate plain English → model-native prompt | ✅ |
+| `POST /api/reverse` — reverse-engineer any prompt → plain English | ✅ |
+| `POST /api/showdown` — compare output across N models | ✅ |
+| `POST /api/detect-modality` — detect modality + suggest model from URL or screenshot | ✅ |
+| `POST /api/checkout` — create Stripe checkout session | ✅ |
+| `POST /api/webhooks/stripe` — Stripe webhook handler | ✅ |
 
-| Component | Status | Details |
-|-----------|--------|---------|
-| Project structure | ✅ | App Router, API routes, components, lib |
-| Authentication | ⏳ | Clerk integration (partial) |
-| Dashboard layout | ⏳ | Usage stats, prompt history, templates list |
-| Optimize form | ⏳ | Input, mode selector, submit, results display |
-| Template management | ⏳ | Create, edit, delete, search templates |
-| History view | ⏳ | List with filters, delete, duplicate |
-| Settings page | ⏳ | API keys, model selection, preferences |
-| Subscription UI | ⏳ | Plans display, checkout flow, Stripe integration |
-| Responsive design | ⏳ | Mobile, tablet, desktop layouts |
-
-**Current Blockers:** None. Ready for component implementation.
-
----
-
-## Phase 5: Browser Extension (Plasmo) ⏳ IN PROGRESS
-
-| Component | Status | Details |
-|-----------|--------|---------|
-| Project setup | ✅ | Plasmo config, tsconfig, package.json |
-| Popup UI | ⏳ | Mode buttons, prompt input, result display |
-| Options page | ⏳ | API key settings, model selection, usage display |
-| Content script | ⏳ | Get selected text, handle messages |
-| Background service worker | ⏳ | API calls, message relay |
-| Context menu | ⏳ | Right-click "Optimize prompt" option |
-| Storage | ⏳ | chrome.storage API for settings and cache |
-| Multi-browser build | ⏳ | Chrome (MV3), Firefox (MV3), Edge (MV3) |
-
-**Current Blockers:** parcel-watcher native module build issue on Windows (non-critical; builds on Linux/macOS). Workaround: CI/CD builds on Linux runner.
-
----
-
-## Phase 6: Desktop App (Tauri v2) ✅ COMPLETE
-
-| Component | Status | Details |
-|-----------|--------|---------|
-| Tauri setup | ✅ | v2, Rust backend scaffold, config |
-| React frontend | ✅ | Vite bundler, entry point (main.tsx), CSS (Tailwind) |
-| TypeScript config | ✅ | Frontend (ES2020, jsx:react-jsx), Node (for Vite) |
-| Vite build config | ✅ | External Tauri packages, dist output, sourcemaps |
-| Window management | ✅ | 1200x800 resizable window, min size 600x400 |
-| Tauri integration | ✅ | IPC commands available in frontend |
-| Auto-updater | ✅ | Configured, signing keys set, endpoint ready |
-| Offline mode | ✅ | localStorage for persistence |
-| Responsive layout | ✅ | Grid layout adapts to window size |
-
-**Current Status:** App compiles and runs. Desktop binary builds on CI. Ready for features.
-
----
-
-## Phase 7: Documentation ✅ COMPLETE
-
-| Document | Status | Location |
-|----------|--------|----------|
-| README | ✅ | root README.md - Quick start, features, architecture |
-| CONTRIBUTING | ✅ | CONTRIBUTING.md - Dev setup, code style, PR workflow |
-| API Reference | ✅ | docs/API.md - Endpoints, auth, rate limits, examples |
-| Deployment Guide | ✅ | docs/DEPLOYMENT.md - Per-platform deploy steps |
-| Architecture | ✅ | docs/ARCHITECTURE.md - System design, data flow, components |
-| Implementation Status | ✅ | IMPLEMENTATION_STATUS.md - This file |
-
----
-
-## Phase 8: Testing ✅ COMPLETE (Structure)
-
-| Test Suite | Status | Coverage |
-|-----------|--------|----------|
-| Playwright config | ✅ | Multi-browser (chromium, firefox, webkit) |
-| Web E2E tests | ✅ | Homepage, auth, optimize form, history, responsive |
-| Extension E2E tests | ✅ | Popup, options, context menu, content script |
-| Desktop E2E tests | ✅ | Window, buttons, input/output, history, settings |
-| Issue templates | ✅ | Bug reports, feature requests |
-
-**Status:** Test structure in place. Ready to run with live environment (requires API keys).
-
----
-
-## Phase 9: CI/CD & Deployment ✅ COMPLETE
-
-| Workflow | Status | Trigger |
-|----------|--------|---------|
-| Test workflow | ✅ | Push to main/develop - lint, type-check, build, tests |
-| Web deploy | ✅ | Push to main in apps/web - Vercel deployment |
-| Desktop release | ✅ | Version tag (v*.*.*) - Multi-OS builds, upload to GitHub Releases |
-| Issue templates | ✅ | Bug report, feature request templates |
-| Signed binaries | ✅ | Tauri private key integration, env vars set |
+### CI/CD & Tooling
+| Workflow | Status |
+|----------|--------|
+| Turborepo build orchestration | ✅ |
+| `turbo build` / `turbo dev` / `turbo test` / `turbo lint` | ✅ |
+| ESLint configuration | ✅ |
+| Vitest (unit tests) | ✅ |
+| Playwright (E2E tests) | ✅ |
+| Sentry error monitoring | ✅ |
+| Vercel Analytics + Speed Insights | ✅ |
+| Upstash rate limiting | ✅ |
 
 ---
 
-## Features Tracking
+## What's in Active Development
 
-### Core Optimization Modes
-
-| Mode | Status | Implementation |
-|------|--------|-----------------|
-| Compress | ✅ | System prompt defined, OpenAI integration ready |
-| Enhance | ✅ | System prompt defined, OpenAI integration ready |
-| Rewrite | ✅ | System prompt defined, OpenAI integration ready |
-
-### Model Selection
-
-| Feature | Status | Details |
-|---------|--------|---------|
-| gpt-4o-mini (default) | ✅ | Cost-effective, suitable for compression |
-| gpt-4o (premium) | ✅ | More capable for complex rewrites |
-| Model routing | ⏳ | Backend logic to select based on plan |
-
-### Authentication & Authorization
-
-| Feature | Status | Details |
-|---------|--------|---------|
-| Clerk sign-up | ⏳ | Email, OAuth (Google, GitHub), SAML |
-| Session management | ⏳ | JWT validation, user context |
-| Per-user quotas | ✅ | Backend enforces usage limits |
-| Plan-based access | ⏳ | Free, Pro, Enterprise tiers |
-
-### Payments & Subscriptions
-
-| Feature | Status | Details |
-|---------|--------|---------|
-| Stripe integration | ⏳ | Checkout, webhooks, recurring billing |
-| Razorpay integration | ⏳ | For India/emerging markets |
-| Plan tiers | ⏳ | Free (100 tokens/day), Pro ($9/mo), Enterprise (custom) |
-| Usage tracking | ✅ | Backend counts tokens per optimization |
-| Quota reset | ✅ | Automatic daily/monthly reset per plan |
-
-### User Features
-
-| Feature | Status | Details |
-|---------|--------|---------|
-| Prompt history | ✅ | Save all optimizations, searchable |
-| Templates library | ✅ | Save favorite prompts, reusable |
-| Team workspaces | ⏳ | Share templates, shared quota |
-| API access | ⏳ | Developer API with rate limits |
-| Export/import | ⏳ | CSV, JSON formats |
-
-### Multi-Platform
-
-| Platform | Status | Details |
-|----------|--------|---------|
-| Web (Next.js) | ⏳ | Desktop browser, responsive |
-| Browser extension | ⏳ | Chrome, Firefox, Edge support |
-| Desktop app | ✅ | Windows, macOS, Linux via Tauri |
-| Mobile web | ⏳ | Responsive design (tablet friendly) |
+None — polish phase. All features are built and working across all surfaces.
 
 ---
 
-## Remaining Tasks
+## Quick Stats
 
-### High Priority (Blocking Launch)
-
-| Task | Estimate | Owner | Notes |
-|------|----------|-------|-------|
-| Web dashboard implementation | 2 weeks | Frontend | Auth, optimize form, history, templates |
-| Extension content & popup | 1 week | Extension | UI components, message passing, storage |
-| Payment integration | 1 week | Backend | Stripe/Razorpay webhooks, plan routing |
-| E2E test execution | 3 days | QA | Run tests with API keys, fix failures |
-| Code signing (Windows/macOS) | 2 days | DevOps | Acquire certs, configure in CI |
-
-### Medium Priority (Pre-Launch)
-
-| Task | Estimate | Owner | Notes |
-|------|----------|-------|-------|
-| Production API keys | 3 days | Ops | OpenAI, Stripe, Razorpay, Clerk credentials |
-| S3 bucket setup | 2 days | DevOps | Desktop auto-updater release storage |
-| Browser testing | 3 days | QA | Manual testing on Firefox, Edge |
-| Performance optimization | 3 days | Engineering | Bundle size, API latency, rendering |
-| Monitoring setup | 2 days | DevOps | Sentry, Vercel Analytics, logging |
-
-### Low Priority (Post-Launch)
-
-| Task | Estimate | Owner | Notes |
-|------|----------|-------|-------|
-| Beta testing program | 1 week | Product | User feedback, bug fixes |
-| Marketing materials | 2 weeks | Marketing | Landing page, blog, social media |
-| Store submissions | 1 week | DevOps | Chrome Web Store, Firefox Add-ons, Edge |
-| Analytics dashboard | 1 week | Analytics | User insights, feature usage |
-| Developer documentation | 3 days | Docs | API SDK examples, integration guides |
-
----
-
-## Dependency Status
-
-| Dependency | Version | Status | Notes |
-|-----------|---------|--------|-------|
-| Node.js | 18+ | ✅ | Tested on v20 |
-| pnpm | 8+ | ✅ | Workspace manager |
-| Turbo | Latest | ✅ | Build orchestration |
-| Next.js | 14 | ✅ | Web framework |
-| Tauri | v2 | ✅ | Desktop framework |
-| Plasmo | 0.89+ | ⏳ | Extension framework (Windows build issue) |
-| Convex | Latest | ✅ | Backend |
-| Clerk | Latest | ⏳ | Authentication |
-| OpenAI SDK | Latest | ✅ | API client |
-| Stripe SDK | Latest | ⏳ | Payments |
-| React | 18+ | ✅ | UI library |
-| Tailwind | 3+ | ✅ | CSS framework |
-| Playwright | Latest | ✅ | Testing |
-
----
-
-## Known Issues
-
-| Issue | Severity | Status | Workaround |
-|-------|----------|--------|-----------|
-| parcel-watcher Windows build | Low | Open | Build extension on Linux/macOS CI runners |
-| Tauri requires Rust toolchain | Medium | Resolved | Documented in README |
-| OpenAI API rate limits | Medium | Mitigated | Implement exponential backoff + queue |
-| Clerk session persistence | Low | Pending | Configure httpOnly cookie settings |
-
----
-
-## Launch Checklist
-
-- [ ] All web dashboard screens implemented and tested
-- [ ] Extension popup and options page functional on Chrome, Firefox, Edge
-- [ ] Desktop app packaged for Windows (MSI), macOS (DMG), Linux (AppImage)
-- [ ] All E2E tests passing
-- [ ] Code signing certificates acquired and integrated
-- [ ] Production API keys (OpenAI, Stripe, Razorpay, Clerk) configured
-- [ ] S3 bucket and auto-updater endpoint deployed
-- [ ] Monitoring and logging configured (Sentry, Vercel Analytics)
-- [ ] Documentation reviewed and finalized
-- [ ] Security audit completed
-- [ ] Performance benchmarks met
-- [ ] Beta testing feedback incorporated
-- [ ] Extension submitted to stores (pending store approval)
-- [ ] Marketing materials ready
-- [ ] Support infrastructure (email, docs, help center) live
-- [ ] Launch announcement scheduled
-
----
-
-## Timeline
-
-```
-May 2026    Foundation & architecture complete ✅
-June 2026   Backend + shared packages done ✅
-July 2026   Web dashboard, extension, desktop implementation
-August 2026 Testing, optimization, store submissions
-Sept 2026   Launch & beta feedback
-Oct 2026+   Post-launch features & scaling
-```
+| Metric | Value |
+|--------|-------|
+| Optimization modes | 6 |
+| Supported models | 14 (6 text, 3 image, 3 video, 2 audio) |
+| Modalities | 5 (text, image, video, audio, code) |
+| LLM providers | 3 (OpenAI, Anthropic, Google) |
+| Application surfaces | 5 (web, extension, desktop, VS Code, Discord) |
+| Built-in library templates | 50 |
+| Payment provider | Stripe (Free / Pro / Team plans) |
+| Auth provider | Clerk |

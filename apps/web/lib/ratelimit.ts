@@ -138,6 +138,13 @@ export const checkoutLimiter = createLimiter({
   prefix: 'checkout',
 });
 
+/** Limiter for AI forge/reverse/showdown endpoints: 30 requests per minute */
+export const aiLimiter = createLimiter({
+  limit: 30,
+  windowMs: 60_000,
+  prefix: 'ai',
+});
+
 /**
  * Helper to derive a stable identifier for a request. Falls back to a generic
  * label if no headers are available — this means unauthed traffic from behind

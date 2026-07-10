@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "@promptforge/convex/convex/_generated/api";
 import { logger } from "@/lib/logger";
+import { aiLimiter, identifyRequest } from "@/lib/ratelimit";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -18,6 +19,20 @@ export async function POST(req: NextRequest) {
         { status: 401, headers: cors }
       );
     }
+
+    const identifier = userId || identifyRequest(req);
+    const { success, limit, remaining, reset } = await aiLimiter.limit(identifier);
+    if (!success) {
+      const res = NextResponse.json(
+        { error: "Too many requests. Please slow down." },
+        { status: 429, headers: cors }
+      );
+      res.headers.set("X-RateLimit-Limit", String(limit));
+      res.headers.set("X-RateLimit-Remaining", String(remaining));
+      res.headers.set("X-RateLimit-Reset", String(reset));
+      return res;
+    }
+
     const body = await req.json().catch(() => null);
     if (!body || typeof body.prompt !== "string") {
       return NextResponse.json(

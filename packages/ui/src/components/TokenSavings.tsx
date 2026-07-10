@@ -11,12 +11,14 @@ export function TokenSavings({
 }: TokenSavingsProps) {
   return (
     <div className={`text-center ${className ?? ""}`}>
-      <div className="text-3xl font-bold text-green-600">
+      <div className="text-2xl font-bold" style={{ color: 'var(--green)' }}>
         {tokens.toLocaleString()}
       </div>
-      <div className="text-xs text-gray-500 mt-1">Tokens saved</div>
+      <div className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
+        Tokens saved
+      </div>
       {estimatedCost !== undefined && (
-        <div className="text-xs text-gray-400 mt-1">
+        <div className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
           ≈ ${estimatedCost.toFixed(3)} saved
         </div>
       )}

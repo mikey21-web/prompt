@@ -10,11 +10,14 @@ import {
   buildIntentExtractionPrompt,
   buildSynthesisPrompt,
   buildReversePrompt,
+  buildStrategyDirective,
+  countTokens,
   defaultTargetForModality,
   STYLE_GUIDES,
   MODELS,
   type Intent,
   type ModelId,
+  type Strategy,
 } from "@promptforge/core";
 
 // ----- providers (lazy) -----
@@ -53,10 +56,6 @@ function getGemini(): GoogleGenerativeAI | null {
 
 // ----- helpers -----
 
-function approxTokens(text: string): number {
-  return Math.ceil(text.length / 4);
-}
-
 /**
  * Extract intent JSON from a plain-English input. Uses GPT-4o-mini for
  * speed and cost — the structured output is consumed by all downstream
@@ -93,10 +92,16 @@ async function extractIntent(input: string): Promise<Intent> {
 async function synthesizePrompt(
   target: ModelId,
   intent: Intent,
-  customGuide?: { rules: string[]; avoid: string[]; formatOverride?: string } | null
+  customGuide?: { rules: string[]; avoid: string[]; formatOverride?: string } | null,
+  strategy?: Strategy,
 ): Promise<string> {
   const meta = MODELS[target];
   let sys = buildSynthesisPrompt(target);
+
+  // Append strategy directive (compress / enhance) if set
+  if (strategy) {
+    sys += buildStrategyDirective(strategy);
+  }
 
   // Merge custom user style guide if provided
   if (customGuide) {
@@ -180,6 +185,7 @@ export const translate = action({
   args: {
     input: v.string(),
     target: v.optional(v.string()),
+    mode: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -202,16 +208,29 @@ export const translate = action({
       (args.target as ModelId | undefined) ??
       defaultTargetForModality(intent.modality);
 
+    // Resolve strategy: manual mode overrides auto diagnosis
+    const userMode = args.mode ?? "auto";
+    let strategy: Strategy | undefined;
+    let diagnosis: { strategy: Strategy; reason: string } | undefined;
+
+    if (userMode === "auto") {
+      strategy = intent.diagnosis?.strategy ?? "enhance";
+      diagnosis = intent.diagnosis ?? { strategy: "enhance", reason: "default to enhance (no diagnosis)" };
+    } else if (userMode === "compress" || userMode === "enhance") {
+      strategy = userMode;
+      diagnosis = { strategy: userMode, reason: `${userMode} (manual)` };
+    }
+
     // Look up active custom style guide for this target
     const customGuide = await ctx.runQuery(
       internal.styleGuides.getActiveGuideForTargetInternal,
       { clerkId: identity.subject, targetModel: target }
     );
 
-    const optimized = await synthesizePrompt(target, intent, customGuide);
+    const optimized = await synthesizePrompt(target, intent, customGuide, strategy);
 
-    const tokensIn = approxTokens(args.input);
-    const tokensOut = approxTokens(optimized);
+    const tokensIn = countTokens(args.input);
+    const tokensOut = countTokens(optimized);
 
     await ctx.runMutation(internal.promptforge_mutations.savePromptForge, {
       clerkId: identity.subject,
@@ -224,7 +243,7 @@ export const translate = action({
       tokensOut,
     });
 
-    return { intent, target, optimized, tokensIn, tokensOut };
+    return { intent, target, optimized, tokensIn, tokensOut, mode: userMode, diagnosis };
   },
 });
 

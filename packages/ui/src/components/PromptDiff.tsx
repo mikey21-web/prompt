@@ -17,26 +17,54 @@ export function PromptDiff({
   const expanded = tokensOut > tokensIn;
 
   return (
-    <div className="space-y-3">
-      <div className="flex gap-3 text-sm font-medium text-center">
-        <div className="flex-1 bg-red-50 text-red-700 rounded px-3 py-1">
-          Before: ~{tokensIn} tokens
+    <div className="space-y-2.5">
+      <div className="flex gap-2 text-xs text-center font-medium">
+        <div
+          className="flex-1 rounded-lg px-2.5 py-1.5"
+          style={{
+            backgroundColor: 'var(--red-dim)',
+            color: 'var(--red)',
+          }}
+        >
+          Before: ~{tokensIn}
         </div>
-        <div className="flex-1 bg-green-50 text-green-700 rounded px-3 py-1">
-          After: ~{tokensOut} tokens{" "}
-          {expanded ? `(+${Math.round(((tokensOut - tokensIn) / tokensIn) * 100)}%)` : `(-${pctSaved}%)`}
+        <div
+          className="flex-1 rounded-lg px-2.5 py-1.5"
+          style={{
+            backgroundColor: 'var(--green-dim)',
+            color: 'var(--green)',
+          }}
+        >
+          After: ~{tokensOut}{" "}
+          {expanded
+            ? `(+${Math.round(((tokensOut - tokensIn) / tokensIn) * 100)}%)`
+            : `(-${pctSaved}%)`}
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2">
         <div>
-          <p className="text-xs text-gray-400 mb-1">Original</p>
-          <div className="bg-gray-50 border rounded p-3 text-sm text-gray-600 max-h-40 overflow-auto whitespace-pre-wrap">
+          <p className="text-[10px] mb-1" style={{ color: 'var(--text-muted)' }}>Original</p>
+          <div
+            className="border rounded-lg p-2.5 text-xs overflow-auto whitespace-pre-wrap max-h-32"
+            style={{
+              borderColor: 'var(--border)',
+              backgroundColor: 'var(--surface)',
+              color: 'var(--text-secondary)',
+            }}
+          >
             {original}
           </div>
         </div>
         <div>
-          <p className="text-xs text-gray-400 mb-1">Optimized</p>
-          <div className="bg-green-50 border border-green-200 rounded p-3 text-sm text-gray-800 max-h-40 overflow-auto whitespace-pre-wrap">
+          <p className="text-[10px] mb-1" style={{ color: 'var(--text-muted)' }}>Optimized</p>
+          <div
+            className="border rounded-lg p-2.5 text-xs overflow-auto whitespace-pre-wrap max-h-32"
+            style={{
+              borderColor: 'rgba(74,222,128,0.2)',
+              backgroundColor: 'var(--green-dim)',
+              color: 'var(--text-primary)',
+            }}
+          >
             {optimized}
           </div>
         </div>

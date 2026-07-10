@@ -12,6 +12,7 @@ import {
   CreditCard,
   Activity,
   BookOpen,
+  Shield,
 } from 'lucide-react';
 
 export const navLinks = [
@@ -83,4 +84,14 @@ export const navLinks = [
     label: 'Settings',
     icon: Settings,
   },
+  // ----- Admin (dev only) -----
+  ...(process.env.NODE_ENV === 'development'
+    ? [
+        {
+          href: '/admin',
+          label: 'Admin',
+          icon: Shield,
+        },
+      ]
+    : []),
 ];

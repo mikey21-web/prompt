@@ -12,6 +12,7 @@
 
 import { MODELS, type ModelId, type Modality } from "./models";
 import { STYLE_GUIDES } from "./style-guides";
+import type { Diagnosis, Strategy } from "./types";
 
 export interface Intent {
   modality: Modality;
@@ -26,6 +27,11 @@ export interface Intent {
   structure?: string[];
   /** Optional explicit visual references (style, era, etc.) for image/video. */
   visual_refs?: string[];
+  /**
+   * Auto-diagnosis: the model picks compress or enhance with a one-line reason.
+   * Only present when the user hasn't forced a manual mode.
+   */
+  diagnosis?: Diagnosis;
 }
 
 /**
@@ -43,6 +49,8 @@ Rules:
 - Detect modality from the input. If user mentions "video", "shot", "scene" -> video. "image", "picture", "render" -> image. "song", "music", "lyrics" -> audio. Otherwise text.
 - For ambiguous inputs default to text.
 
+Additionally, include a "diagnosis" object that decides whether this prompt needs **compression** (it's already clear/verbose) or **enhancement** (it's vague/underspecified). Pick "compress" when the input is reasonably clear and could use trimming. Pick "enhance" when it's missing structure, role, or output format. The reason should be one short phrase like "prompt is already clear, ~35% filler to cut" or "vague intent, needs role + output format".
+
 Output ONLY valid JSON matching this shape:
 {
   "modality": "text" | "image" | "video" | "audio" | "code",
@@ -54,7 +62,11 @@ Output ONLY valid JSON matching this shape:
   "constraints": string[],
   "output_format": string,
   "structure": string[] | null,
-  "visual_refs": string[] | null
+  "visual_refs": string[] | null,
+  "diagnosis": {
+    "strategy": "compress" | "enhance",
+    "reason": string
+  }
 }
 
 Do not include any prose before or after the JSON.`;
@@ -122,6 +134,16 @@ Be concise. Do not include the original prompt back. Do not add commentary about
  * Default suggested target models per detected modality. Used when the
  * user hasn't picked a target explicitly.
  */
+/**
+ * Return a directive string appended to the synthesis system prompt based on
+ * the chosen strategy. compress → cut filler; enhance → add structure.
+ */
+export function buildStrategyDirective(strategy: Strategy): string {
+  return strategy === "compress"
+    ? `\n\nStrategy: COMPRESS. Cut filler, hedging, and redundancy. Preserve 100% of the original intent. Target 30-50% fewer tokens than a naive rephrasing.`
+    : `\n\nStrategy: ENHANCE. Add a role definition, explicit task description, output format specification, and relevant constraints. Keep the added structure concise.`;
+}
+
 export function defaultTargetForModality(m: Modality): ModelId {
   switch (m) {
     case "image":

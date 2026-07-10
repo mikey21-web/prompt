@@ -1,8 +1,18 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { useQuery } from "convex/react";
 import { useUser } from "@clerk/nextjs";
 import { api } from "@promptforge/convex/convex/_generated/api";
+
+const container = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.05 } },
+};
+const item = {
+  hidden: { opacity: 0, y: 8 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] as const } },
+};
 
 export default function HistoryPage() {
   const { user } = useUser();
@@ -13,16 +23,18 @@ export default function HistoryPage() {
   }
 
   return (
-    <div className="max-w-4xl space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">History</h1>
+    <motion.div variants={container} initial="hidden" animate="show" className="max-w-4xl space-y-6">
+      <motion.div variants={item}>
+        <h1 className="text-2xl font-bold text-gray-900">History</h1>
+      </motion.div>
 
-      <div className="space-y-3">
-        {history?.map((item) => (
-          <div key={item._id} className="rounded-lg border bg-white p-4 shadow-sm">
+      <motion.div variants={item} className="space-y-3">
+        {history?.map((entry) => (
+          <div key={entry._id} className="rounded-lg border bg-white p-4 shadow-sm">
             <span className="text-xs text-gray-500">
-              {new Date(item.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              {new Date(entry.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
             </span>
-            <p className="mt-2 line-clamp-2 text-sm text-gray-700">{item.original}</p>
+            <p className="mt-2 line-clamp-2 text-sm text-gray-700">{entry.original}</p>
           </div>
         ))}
 
@@ -31,7 +43,7 @@ export default function HistoryPage() {
             No prompts yet. Start by optimizing one!
           </div>
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

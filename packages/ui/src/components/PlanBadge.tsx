@@ -2,9 +2,9 @@ import { cn } from "../lib/cn";
 import type { Plan } from "@promptforge/core";
 
 const STYLES: Record<Plan, string> = {
-  free: "bg-gray-100 text-gray-700 border-gray-200",
-  pro: "bg-violet-100 text-violet-700 border-violet-200",
-  team: "bg-blue-100 text-blue-700 border-blue-200",
+  free: "text-[var(--text-muted)]",
+  pro: "text-[var(--accent)]",
+  team: "text-[var(--green)]",
 };
 
 const LABELS: Record<Plan, string> = {
@@ -17,9 +17,21 @@ export function PlanBadge({ plan }: { plan: Plan }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border",
+        "inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold border",
         STYLES[plan]
       )}
+      style={{
+        backgroundColor: plan === "free"
+          ? "var(--surface-hover)"
+          : plan === "pro"
+            ? "var(--accent-dim)"
+            : "var(--green-dim)",
+        borderColor: plan === "free"
+          ? "var(--border)"
+          : plan === "pro"
+            ? "var(--accent-border)"
+            : "rgba(74,222,128,0.2)",
+      }}
     >
       {LABELS[plan]}
     </span>

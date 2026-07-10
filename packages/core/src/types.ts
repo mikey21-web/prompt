@@ -1,4 +1,5 @@
 export type Mode =
+  | "auto"
   | "compress"
   | "enhance"
   | "rewrite"
@@ -7,6 +8,7 @@ export type Mode =
   | "template";
 
 export type TargetModel =
+  | "auto"
   | "gpt-4o-mini"
   | "gpt-4o";
 
@@ -18,6 +20,15 @@ export type Tone =
   | "persuasive";
 
 export type Plan = "free" | "pro" | "team";
+
+export type Strategy = "compress" | "enhance";
+
+export interface Diagnosis {
+  strategy: Strategy;
+  reason: string;
+}
+
+export type ForgeMode = "auto" | Strategy;
 
 export type Source = "extension" | "desktop" | "web" | "api";
 
@@ -42,6 +53,7 @@ export const PLAN_LIMITS: Record<Plan, { requestsPerDay: number }> = {
 };
 
 export const ALL_MODES: Mode[] = [
+  "auto",
   "compress",
   "enhance",
   "rewrite",
@@ -51,6 +63,7 @@ export const ALL_MODES: Mode[] = [
 ];
 
 export const ALL_TARGET_MODELS: TargetModel[] = [
+  "auto",
   "gpt-4o-mini",
   "gpt-4o",
 ];

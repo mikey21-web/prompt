@@ -1,10 +1,20 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useQuery } from 'convex/react';
 import { api } from '@promptforge/convex/convex/_generated/api';
 import Link from 'next/link';
 import { Search, Sparkles } from 'lucide-react';
+
+const container = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.05 } },
+};
+const item = {
+  hidden: { opacity: 0, y: 8 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] as const } },
+};
 
 export default function LibraryPage() {
   const [tag, setTag] = useState('');
@@ -44,15 +54,15 @@ export default function LibraryPage() {
   ).sort();
 
   return (
-    <div className="space-y-6">
-      <div>
+    <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
+      <motion.div variants={item}>
         <h1 className="text-3xl font-bold text-gray-900">Library</h1>
         <p className="mt-2 text-gray-600">
           Curated starter prompts. Tap one to forge it for your model of choice.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+      <motion.div variants={item} className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         <div className="flex items-center gap-2">
           <Search className="h-4 w-4 text-gray-400" />
           <input
@@ -90,17 +100,17 @@ export default function LibraryPage() {
             </button>
           ))}
         </div>
-      </div>
+      </motion.div>
 
       {filtered.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-gray-300 p-12 text-center">
+        <motion.div variants={item} className="rounded-lg border border-dashed border-gray-300 p-12 text-center">
           <Sparkles className="mx-auto h-8 w-8 text-gray-400" />
           <p className="mt-3 text-sm text-gray-600">
             No templates match your search.
           </p>
-        </div>
+        </motion.div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <motion.div variants={item} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((t) => (
             <Link
               key={t._id}
@@ -128,8 +138,8 @@ export default function LibraryPage() {
               </p>
             </Link>
           ))}
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }

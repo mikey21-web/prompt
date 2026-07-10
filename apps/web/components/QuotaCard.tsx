@@ -11,59 +11,60 @@ export function QuotaCard() {
 
   if (user === undefined) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm animate-pulse">
-        <div className="h-6 bg-gray-200 rounded w-24 mb-4"></div>
-        <div className="h-2 bg-gray-200 rounded mb-4"></div>
-        <div className="h-4 bg-gray-200 rounded w-40"></div>
+      <div
+        className="rounded-xl border p-5 animate-pulse"
+        style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)' }}
+      >
+        <div className="h-5 rounded w-24 mb-4" style={{ backgroundColor: 'var(--surface-hover)' }}></div>
+        <div className="h-2 rounded mb-4" style={{ backgroundColor: 'var(--surface-hover)' }}></div>
+        <div className="h-4 rounded w-32" style={{ backgroundColor: 'var(--surface-hover)' }}></div>
       </div>
     );
   }
 
-  if (user === null) {
-    return null;
-  }
+  if (user === null) return null;
 
   const limit = PLAN_LIMITS[user.plan].requestsPerDay;
-  const percentageUsed = (user.dailyUsage / limit) * 100;
   const remaining = limit - user.dailyUsage;
-
-  // Calculate reset time (midnight UTC)
-  const now = new Date();
-  const midnight = new Date();
-  midnight.setUTCHours(0, 0, 0, 0);
-  const resetDate = new Date(user.dailyReset);
-  resetDate.setUTCHours(0, 0, 0, 0);
+  const pct = Math.min((user.dailyUsage / limit) * 100, 100);
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">Daily Quota</h2>
+    <div
+      className="rounded-xl border p-5 space-y-4"
+      style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)' }}
+    >
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+          Daily quota
+        </span>
         <PlanBadge plan={user.plan} />
       </div>
 
       <UsageBar used={user.dailyUsage} limit={limit} />
 
-      <div className="mt-4 flex items-center justify-between text-sm">
-        <span className="text-gray-600">
-          {user.dailyUsage} of {limit} requests used
+      <div className="flex items-center justify-between text-xs">
+        <span style={{ color: 'var(--text-secondary)' }}>
+          {user.dailyUsage} / {limit} requests
         </span>
-        <span className="font-medium text-gray-900">{remaining} remaining</span>
+        <span className="font-medium" style={{ color: remaining > 20 ? 'var(--green)' : 'var(--amber)' }}>
+          {remaining} left
+        </span>
       </div>
 
-      <p className="mt-2 text-xs text-gray-500">
-        Resets at midnight UTC
-      </p>
-
-      {percentageUsed > 80 && (
-        <div className="mt-4 rounded-md border border-amber-200 bg-amber-50 p-3">
-          <p className="text-sm text-amber-800">
-            You&apos;re using more than 80% of your daily quota. Consider upgrading your plan.
+      {pct > 80 && (
+        <div
+          className="rounded-lg border p-3 text-xs space-y-2"
+          style={{ borderColor: 'rgba(251,191,36,0.2)', backgroundColor: 'var(--amber-dim)' }}
+        >
+          <p style={{ color: 'var(--amber)' }}>
+            Almost at your daily limit. Upgrade for more.
           </p>
           <Link
             href="/billing"
-            className="mt-2 inline-block text-sm font-medium text-amber-600 hover:text-amber-700 underline"
+            className="inline-block text-xs font-medium underline underline-offset-2"
+            style={{ color: 'var(--amber)' }}
           >
-            View upgrade options →
+            View upgrades
           </Link>
         </div>
       )}

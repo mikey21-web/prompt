@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { buildSystemPrompt, countTokensApprox } from "./prompts";
+import { countTokens } from "./token-count";
 import { PLAN_LIMITS, ALL_MODES } from "./types";
 
 describe("buildSystemPrompt", () => {
@@ -19,18 +20,13 @@ describe("buildSystemPrompt", () => {
     expect(prompt).toContain("precise");
   });
 
-  it("claude target includes XML tag instruction", () => {
-    const prompt = buildSystemPrompt("rewrite", "claude");
-    expect(prompt).toContain("XML tags");
+  it("gpt-4o target includes markdown hint", () => {
+    const prompt = buildSystemPrompt("rewrite", "gpt-4o");
+    expect(prompt).toContain("markdown");
   });
 
-  it("midjourney target includes comma-separated instruction", () => {
-    const prompt = buildSystemPrompt("compress", "midjourney");
-    expect(prompt).toContain("comma-separated");
-  });
-
-  it("gpt4o target includes markdown instruction", () => {
-    const prompt = buildSystemPrompt("enhance", "gpt4o");
+  it("gpt-4o-mini target includes concise markdown hint", () => {
+    const prompt = buildSystemPrompt("compress", "gpt-4o-mini");
     expect(prompt).toContain("markdown");
   });
 
@@ -56,35 +52,65 @@ describe("buildSystemPrompt", () => {
 });
 
 describe("countTokensApprox", () => {
-  it("approximates tokens by character count", () => {
-    expect(countTokensApprox("")).toBe(0);
-    expect(countTokensApprox("test")).toBe(1);
-    expect(countTokensApprox("hello world")).toBe(3);
+  it("delegates to countTokens (backward compat)", () => {
+    expect(countTokensApprox("")).toBe(countTokens(""));
+    expect(countTokensApprox("hello world")).toBe(countTokens("hello world"));
+  });
+});
+
+describe("countTokens", () => {
+  it("returns 0 for empty string", () => {
+    expect(countTokens("")).toBe(0);
   });
 
-  it("rounds up partial tokens", () => {
-    expect(countTokensApprox("abc")).toBe(1);
-    expect(countTokensApprox("abcde")).toBe(2);
+  it("estimates tokens for short prose", () => {
+    const result = countTokens("hello world");
+    expect(result).toBeGreaterThan(0);
+    // "hello world" = 2 words * 1.3 = 2.6 → 3, or 11 chars / 4 = 2.75 → 3
+    expect(result).toBe(3);
+  });
+
+  it("estimates tokens for code-like content", () => {
+    const code = 'const x = { foo: "bar" };';
+    const result = countTokens(code);
+    // Code-like content uses word count * 1.1 instead of 1.3
+    expect(result).toBeGreaterThan(0);
+  });
+
+  it("respects mode ratio parameter", () => {
+    // Use one long word (low word count) so char-based estimate dominates
+    const longText = "supercalifragilisticexpialidocious".repeat(5); // 170 chars
+    const compressTokens = countTokens(longText, "compress");
+    // compress uses 3.5 chars/token → 170/3.5 ≈ 49
+    const enhanceTokens = countTokens(longText, "enhance");
+    // enhance uses 4.5 chars/token → 170/4.5 ≈ 38
+    expect(compressTokens).toBeGreaterThan(enhanceTokens);
+  });
+
+  it("returns 1 for whitespace-only input (char fallback)", () => {
+    // Whitespace still has characters so gets a minimal token estimate
+    expect(countTokens("   ")).toBe(1);
   });
 });
 
 describe("PLAN_LIMITS", () => {
-  it("free plan has 25 requests/day", () => {
-    expect(PLAN_LIMITS.free.requestsPerDay).toBe(25);
+  it("free plan has 10000 requests/day", () => {
+    expect(PLAN_LIMITS.free.requestsPerDay).toBe(10000);
   });
 
-  it("pro plan has 500 requests/day", () => {
-    expect(PLAN_LIMITS.pro.requestsPerDay).toBe(500);
+  it("pro plan has 10000 requests/day", () => {
+    expect(PLAN_LIMITS.pro.requestsPerDay).toBe(10000);
   });
 
-  it("team plan has 500 requests/seat/day", () => {
-    expect(PLAN_LIMITS.team.requestsPerDay).toBe(500);
+  it("team plan has 10000 requests/day", () => {
+    expect(PLAN_LIMITS.team.requestsPerDay).toBe(10000);
   });
 });
 
 describe("ALL_MODES", () => {
-  it("contains all 6 optimization modes", () => {
-    expect(ALL_MODES).toHaveLength(6);
+  it("contains all 7 optimization modes", () => {
+    expect(ALL_MODES).toHaveLength(7);
+    expect(ALL_MODES).toContain("auto");
     expect(ALL_MODES).toContain("compress");
     expect(ALL_MODES).toContain("enhance");
     expect(ALL_MODES).toContain("rewrite");
