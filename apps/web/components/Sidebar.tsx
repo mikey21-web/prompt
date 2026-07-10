@@ -30,7 +30,7 @@ export function Sidebar() {
               }}
               onMouseEnter={(e) => {
                 if (!isActive) {
-                  e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.04)';
+                  e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.04)';
                   e.currentTarget.style.color = 'var(--text-primary)';
                 }
               }}

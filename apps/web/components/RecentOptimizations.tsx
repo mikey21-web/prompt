@@ -83,7 +83,7 @@ export function RecentOptimizations() {
               borderBottom: i < prompts.length - 1 ? '1px solid var(--border)' : undefined,
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)';
+              e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.03)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent';

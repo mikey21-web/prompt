@@ -20,8 +20,14 @@ const isPublicRoute = createRouteMatcher([
 
 export default clerkMiddleware(async (auth, req) => {
   if (!isPublicRoute(req)) {
-    const a = await auth();
-    if (!a.userId) {
+    try {
+      const a = await auth();
+      if (!a.userId) {
+        return Response.redirect(new URL('/sign-in', req.url));
+      }
+    } catch {
+      // Clerk auth unavailable (dev-mode domain restriction, key mismatch, etc.)
+      // Redirect to sign-in instead of crashing with MIDDLEWARE_INVOCATION_FAILED
       return Response.redirect(new URL('/sign-in', req.url));
     }
   }
