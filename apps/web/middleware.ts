@@ -1,4 +1,3 @@
-import { getAuth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
@@ -23,8 +22,11 @@ function isPublicRoute(pathname: string): boolean {
 
 export default async function middleware(req: NextRequest) {
   if (!isPublicRoute(req.nextUrl.pathname)) {
-    const { userId } = getAuth(req);
-    if (!userId) {
+    const hasSession =
+      req.cookies.get("__session")?.value ||
+      req.cookies.get("__Secure-__session")?.value ||
+      req.cookies.get("__client_uat")?.value;
+    if (!hasSession) {
       return NextResponse.redirect(new URL("/sign-in", req.url));
     }
   }
