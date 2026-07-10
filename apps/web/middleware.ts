@@ -1,8 +1,8 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { getAuth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const isPublicRoute = createRouteMatcher([
+const PUBLIC_ROUTES = [
   "/",
   "/pricing",
   "/benchmark",
@@ -10,33 +10,25 @@ const isPublicRoute = createRouteMatcher([
   "/install",
   "/privacy",
   "/terms",
-  "/sign-in(.*)",
-  "/sign-up(.*)",
-  "/s/(.*)",
-  "/embed(.*)",
-  "/api/webhooks(.*)",
-]);
+  "/sign-in",
+  "/sign-up",
+  "/s",
+  "/embed",
+  "/api/webhooks",
+];
 
-const clerk = clerkMiddleware(async (auth, req) => {
-  if (!isPublicRoute(req)) {
-    try {
-      const a = await auth();
-      if (!a.userId) {
-        return Response.redirect(new URL("/sign-in", req.url));
-      }
-    } catch {
-      return Response.redirect(new URL("/sign-in", req.url));
+function isPublicRoute(pathname: string): boolean {
+  return PUBLIC_ROUTES.some((r) => pathname === r || pathname.startsWith(r + "/"));
+}
+
+export default async function middleware(req: NextRequest) {
+  if (!isPublicRoute(req.nextUrl.pathname)) {
+    const { userId } = getAuth(req);
+    if (!userId) {
+      return NextResponse.redirect(new URL("/sign-in", req.url));
     }
   }
-});
-
-export default async function middleware(req: NextRequest, event: any) {
-  try {
-    const resp = await clerk(req, event);
-    return resp ?? NextResponse.next();
-  } catch {
-    return NextResponse.redirect(new URL("/sign-in", req.url));
-  }
+  return NextResponse.next();
 }
 
 export const config = {
