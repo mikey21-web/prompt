@@ -56,16 +56,16 @@ export function LandingTrustStrip() {
   if (stats.length === 0) return null;
 
   return (
-    <div className="border-y border-white/8">
+    <div className="border-y border-black/8">
       <div className="max-w-5xl mx-auto px-6 py-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           {stats.map((stat) => {
             const inner = (
               <>
-                <p className="text-2xl md:text-3xl font-bold tracking-tighter text-white">
+                <p className="text-2xl md:text-3xl font-bold tracking-tighter text-[#16161a]">
                   {stat.value}
                 </p>
-                <p className="text-xs font-semibold uppercase tracking-widest text-white/40 mt-1">
+                <p className="text-xs font-semibold uppercase tracking-widest text-black/40 mt-1">
                   {stat.label}
                 </p>
               </>

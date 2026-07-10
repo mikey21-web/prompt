@@ -14,11 +14,11 @@ export function Logo({ size = 'md', href = '/', className = '' }: LogoProps) {
   }[size];
 
   const inner = (
-    <span className={`inline-flex items-center ${s.gap} font-bold tracking-tight text-white ${className}`}>
-      {/* Bolt mark — white bg, black bolt */}
-      <span className={`relative inline-flex ${s.mark} items-center justify-center rounded-md bg-white`}>
+    <span className={`inline-flex items-center ${s.gap} font-bold tracking-tight text-[#16161a] ${className}`}>
+      {/* Bolt mark — dark bg, white bolt */}
+      <span className={`relative inline-flex ${s.mark} items-center justify-center rounded-md bg-[#16161a]`}>
         <svg viewBox="0 0 24 24" fill="none" className="h-[58%] w-[58%]" aria-hidden>
-          <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" fill="#0a0a0b" />
+          <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" fill="#fafafa" />
         </svg>
       </span>
       <span className={s.text}>PromptForge</span>
