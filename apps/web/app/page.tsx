@@ -142,12 +142,12 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-2">
             <SignedOut>
-              <SignInButton mode="modal">
+              <SignInButton mode="modal" forceRedirectUrl="/dashboard">
                 <button className="text-sm font-medium text-white/40 hover:text-white transition-colors hidden sm:inline px-3 py-1.5">
                   Sign in
                 </button>
               </SignInButton>
-              <SignInButton mode="modal">
+              <SignInButton mode="modal" forceRedirectUrl="/dashboard">
                 <motion.button
                   whileTap={{ scale: 0.97 }}
                   className="inline-flex items-center gap-1.5 bg-white text-[#0a0a0b] px-4 py-2 rounded-lg text-sm font-semibold hover:bg-white/90 transition-colors duration-150"
@@ -206,7 +206,7 @@ export default function LandingPage() {
           {/* CTAs */}
           <motion.div variants={stagger.item} className="flex items-center gap-3 flex-wrap mb-6">
             <SignedOut>
-              <SignInButton mode="modal">
+              <SignInButton mode="modal" forceRedirectUrl="/dashboard">
                 <motion.button
                   whileTap={{ scale: 0.97 }}
                   className="inline-flex items-center gap-2 bg-white text-[#0a0a0b] px-6 py-3 rounded-xl text-sm font-semibold hover:bg-white/90 transition-colors duration-150"
@@ -456,7 +456,7 @@ export default function LandingPage() {
             </p>
             <div className="flex items-center justify-center gap-4 flex-wrap">
               <SignedOut>
-                <SignInButton mode="modal">
+                <SignInButton mode="modal" forceRedirectUrl="/dashboard">
                   <motion.button
                     whileTap={{ scale: 0.97 }}
                     className="inline-flex items-center gap-2 bg-white text-[#0a0a0b] px-8 py-4 rounded-xl text-base font-semibold hover:bg-white/90 transition-colors duration-150"
